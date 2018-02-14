@@ -3,14 +3,14 @@
 }
 
 html {
-  padding: 1em 0;
+  padding: 0;
   margin: 0;
   background-color: #444;
 }
 
 body {
-  max-width: 40em;
-  margin: 0 auto;
+  max-width: 50em;
+  margin: 1em auto;
   color: #eee;
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
@@ -30,10 +30,19 @@ a:visited {
   text-align: center;
 }
 
+.disclaimer {
+  color: #aaa;
+  font-size: 70%;
+}
+
+h1 {
+  font-weight: normal;
+}
+
 fieldset {
   overflow: hidden;
   float: left;
-  width: 49%;
+  width: 49.5%;
   height: 7em;
   margin: 1em 0;
   border: 1px solid #777;
@@ -71,8 +80,13 @@ input + label {
   margin-top: 0.5em;
 }
 
-input {
+input,
+select {
   font: inherit;
+}
+
+select {
+  margin-left: 0.5em;
 }
 
 input[type="number"] {
@@ -87,7 +101,7 @@ input[type="number"] {
 
 input[type="range"] {
   display: inline-block;
-  width: 12.5em;
+  width: 17.5em;
 }
 
 canvas {
@@ -100,3 +114,22 @@ canvas {
   font: inherit;
 }
 
+@media (max-width: 50em) {
+  body {
+    padding: 0.5em;
+  }
+
+  h1 {
+    margin: 0 0 0.5em;
+  }
+
+  fieldset {
+    float: none;
+    width: 100%;
+    border: none;
+  }
+
+  fieldset + fieldset {
+    margin: 0;
+  }
+}
