@@ -1,0 +1,102 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  padding: 1em 0;
+  margin: 0;
+  background-color: #444;
+}
+
+body {
+  max-width: 40em;
+  margin: 0 auto;
+  color: #eee;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+a {
+  color: #ff925b;
+}
+
+a:visited {
+  color: #ff7070;
+}
+
+.caption {
+  text-align: center;
+}
+
+fieldset {
+  overflow: hidden;
+  float: left;
+  width: 49%;
+  height: 7em;
+  margin: 1em 0;
+  border: 1px solid #777;
+  padding: 0.7em;
+}
+
+fieldset + fieldset {
+  margin-left: 1%;
+}
+
+fieldset.small {
+  clear: both;
+  margin-left: 0;
+  width: 100%;
+  height: auto;
+}
+
+legend {
+  display: block;
+  margin: 0;
+  padding: 0 0.2em;
+}
+
+.col-2 {
+  float: left;
+  width: 50%;
+}
+
+label {
+  display: block;
+  margin: 0 0 0.5em;
+}
+
+input + label {
+  margin-top: 0.5em;
+}
+
+input {
+  font: inherit;
+}
+
+input[type="number"] {
+  display: inline-block;
+  border: 1px solid #fff;
+  background-color: #ddd;
+  padding: 0.2em;
+  line-height: 1;
+  width: 4em;
+  margin-left: 0.5em;
+}
+
+input[type="range"] {
+  display: inline-block;
+  width: 12.5em;
+}
+
+canvas {
+  display: block;
+  width: 400px;
+  height: 300px;
+  background-color: #000;
+  margin: 0 auto;
+  cursor: crosshair;
+  font: inherit;
+}
+
