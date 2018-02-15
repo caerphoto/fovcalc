@@ -70,7 +70,8 @@
 
       this.context.fillStyle = MONITOR_COLOR;
       this.context.strokeStyle = FOV_COLOR;
-      this.context.font = window.getComputedStyle(D.body).font;
+      this.context.font = window.getComputedStyle(D.body).
+        font.replace('300', '400');
 
       // fontSize will be in pixels
       this.textHeight = parseFloat(window.getComputedStyle(D.body).fontSize, 10);

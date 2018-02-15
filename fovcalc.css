@@ -5,17 +5,21 @@
 html {
   padding: 0;
   margin: 0;
-  background-color: #444;
+  background-color: #111;
 }
 
 body {
   max-width: 50em;
   margin: 1em auto;
+  padding: 0.5em 1em;
   color: #eee;
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
   font-size: 16px;
   line-height: 1.4;
+  background-color: #444;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 a {
@@ -39,25 +43,22 @@ h1 {
   font-weight: normal;
 }
 
+.note {
+  font-size: 80%;
+  color: #bbb;
+  letter-spacing: 1px;
+  margin: 0.5em 0 0.7em;
+}
+
+form {
+  max-width: 35em;
+  margin: 0 auto;
+}
+
 fieldset {
-  overflow: hidden;
-  float: left;
-  width: 49.5%;
-  height: 7em;
-  margin: 1em 0;
-  border: 1px solid #777;
-  padding: 0.7em;
-}
-
-fieldset + fieldset {
-  margin-left: 1%;
-}
-
-fieldset.small {
-  clear: both;
-  margin-left: 0;
-  width: 100%;
-  height: auto;
+  margin: 0 0 1em;
+  padding: 0.5em;
+  border: none;
 }
 
 legend {
@@ -66,12 +67,7 @@ legend {
   padding: 0 0.2em;
 }
 
-.col-2 {
-  float: left;
-  width: 50%;
-}
-
-label {
+.units label {
   display: block;
   margin: 0 0 0.5em;
 }
@@ -90,7 +86,8 @@ select {
 }
 
 input[type="number"] {
-  display: inline-block;
+  display: block;
+  float: left;
   border: 1px solid #fff;
   background-color: #ddd;
   padding: 0.2em;
@@ -100,8 +97,9 @@ input[type="number"] {
 }
 
 input[type="range"] {
-  display: inline-block;
-  width: 17.5em;
+  display: block;
+  float: left;
+  width: calc(100% - 5em);
 }
 
 canvas {
@@ -112,24 +110,17 @@ canvas {
   margin: 0 auto;
   cursor: crosshair;
   font: inherit;
+  border-radius: 3px;
 }
 
 @media (max-width: 50em) {
   body {
     padding: 0.5em;
+    border: none;
+    margin: 0;
   }
 
   h1 {
     margin: 0 0 0.5em;
-  }
-
-  fieldset {
-    float: none;
-    width: 100%;
-    border: none;
-  }
-
-  fieldset + fieldset {
-    margin: 0;
   }
 }

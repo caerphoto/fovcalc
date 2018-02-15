@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
   </head>
+
   <body>
     <h1>Field of view calculator</h1>
     <p>Calculate the mathematically correct field of view for your simulator, based on <em>monitor size</em> and <em>viewing distance</em>.</p>
@@ -36,6 +37,8 @@
         <input type="range" name="size-s" min="10" max="100" value="24" step="0.5">
         <input type="number" name="size-n" min="10" max="200" value="24">
 
+        <p class="note">Note: screen size is measured diagonally.</p>
+
         <label>Aspect ratio
           <select name="aspect-ratio">
             <option value="16:9" selected>16:9</option>
@@ -44,9 +47,10 @@
             <option value="21:9">21:9</option>
           </select>
         </label>
+
       </fieldset>
 
-      <fieldset class="small">
+      <fieldset class="units">
         <legend>Units</legend>
         <label><input type="radio" name="units" value="inches" checked>
           Inches</label>
