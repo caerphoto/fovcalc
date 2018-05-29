@@ -5,38 +5,47 @@
 html {
   padding: 0;
   margin: 0;
-  background-color: #111;
+  background: #6b5f4c;
 }
 
 body {
-  max-width: 50em;
-  margin: 1em auto;
-  padding: 0.5em 1em;
-  color: #eee;
+  margin: 1em;
+  padding: 0;
+  color: #333;
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
   font-size: 16px;
   line-height: 1.4;
-  background-color: #444;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: #c6e1f2;
+background: -moz-linear-gradient(top, hsla(203,63%,86%,1) 0%, hsla(210,100%,96%,1) 50%, hsla(103,37%,96%,1) 51%, hsla(80,65%,80%,1) 100%);
+background: -webkit-linear-gradient(top, hsla(203,63%,86%,1) 0%,hsla(210,100%,96%,1) 50%,hsla(103,37%,96%,1) 51%,hsla(80,65%,80%,1) 100%);
+background: linear-gradient(to bottom, hsla(203,63%,86%,1) 0%,hsla(210,100%,96%,1) 50%,hsla(103,37%,96%,1) 51%,hsla(80,65%,80%,1) 100%);
+
+  border-width: 1.4em;
+  border-color: #333;
+  border-style: solid;
+  border-radius: 0.3em;
+  box-shadow:
+    inset 0 0 0.5em rgba(0, 0, 0, 0.5),
+          0 1.5em 2em -1em rgba(0, 0, 0, 0.2);
+}
+
+.main {
+  max-width: 50em;
+  margin: 0 auto;
 }
 
 a {
-  color: #ff925b;
+  color: #c16500;
 }
 
 a:visited {
-  color: #ff7070;
+  color: #b5002f;
 }
 
 .caption {
   text-align: center;
-}
-
-.disclaimer {
-  color: #aaa;
-  font-size: 70%;
 }
 
 h1 {
@@ -45,9 +54,10 @@ h1 {
 
 .note {
   font-size: 80%;
-  color: #bbb;
+  color: #555;
   letter-spacing: 1px;
   margin: 0.5em 0 0.7em;
+  clear: both;
 }
 
 form {
@@ -88,8 +98,8 @@ select {
 input[type="number"] {
   display: block;
   float: left;
-  border: 1px solid #fff;
-  background-color: #ddd;
+  border: 1px solid #999;
+  background-color: #f4f4f4;
   padding: 0.2em;
   line-height: 1;
   width: 4em;
@@ -99,28 +109,48 @@ input[type="number"] {
 input[type="range"] {
   display: block;
   float: left;
-  width: calc(100% - 5em);
+  width: calc(100% - 11em);
+}
+
+input[type="number"] + label {
+    margin-left: 0.5em;
+    float: left;
 }
 
 canvas {
+  box-sizing: content-box;
   display: block;
   width: 400px;
   height: 300px;
   background-color: #000;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #555;
+  box-shadow:
+    0 1px 0 #888,
+    0 2px 1px rgba(0, 0, 0, 0.3);
   margin: 0 auto;
   cursor: crosshair;
   font: inherit;
   border-radius: 3px;
 }
 
-@media (max-width: 50em) {
+@media (max-width: 580px) {
+  html {
+    background: none;
+  }
   body {
     padding: 0.5em;
     border: none;
     margin: 0;
+    box-shadow: none;
   }
 
   h1 {
     margin: 0 0 0.5em;
+  }
+
+  canvas {
+    border: none;
   }
 }

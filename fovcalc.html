@@ -11,58 +11,61 @@
   </head>
 
   <body>
-    <h1>Field of view calculator</h1>
-    <p>Calculate the mathematically correct field of view for your simulator, based on <em>monitor size</em> and <em>viewing distance</em>.</p>
-    <p>You may be wondering, <q>Why would I do that?</q> Watch <a
-      href="https://www.youtube.com/watch?v=AbbxkX7kS_M">this video by Empty
-      Box</a> for an explanation. Basically it's so things in the game look the
-      same size as they would in real life, allowing you to judge distances
-      better.
-    </p>
+    <div class="main">
+      <h1>Field of view calculator</h1>
+      <p>Calculate the mathematically correct field of view for your simulator, based on <em>monitor size</em> and <em>viewing distance</em>.</p>
+      <p>Why do this? Watch <a
+        href="https://www.youtube.com/watch?v=AbbxkX7kS_M">this video by Empty
+        Box</a> for an explanation. Basically it's so things in the game look the
+        same size as they would in real life, allowing you to judge distances
+        better.
+      </p>
+      <noscript>
+        <style>
+          .error { color: #d88; background-color: #622; padding: 1em; text-align: center; }
+          canvas, .caption, form, .disclaimer { display: none; }
+        </style>
+        <p class="error">This calculator only works when JavaScript is enabled.</p>
+      </noscript>
 
-    <canvas id="fov-preview"></canvas>
+      <canvas id="fov-preview"></canvas>
 
-    <p class="caption">Top view: horizontal FoV; side view: vertical FoV.</p>
+      <p class="caption">Top view: horizontal FoV; side view: vertical FoV.</p>
 
-    <form action="#">
+      <form action="#">
 
-      <fieldset>
-        <legend>Distance to screen</legend>
-        <input type="range" name="distance-s" min="10" max="200" value="38">
-        <input type="number" name="distance-n" min="10" max="500" value="38">
-      </fieldset>
+        <fieldset>
+          <legend>Distance to screen</legend>
+          <input type="range" name="distance-s" min="10" max="200" value="37">
+          <input type="number" name="distance-n" min="10" max="500" value="37">
+          <label title="Centimetres if unchecked"><input type="checkbox" name="distance-inches" checked> inches</label>
+        </fieldset>
 
-      <fieldset>
-        <legend>Screen size and shape</legend>
-        <input type="range" name="size-s" min="10" max="100" value="24" step="0.5">
-        <input type="number" name="size-n" min="10" max="200" value="24">
+        <fieldset>
+          <legend>Screen size and shape</legend>
+          <input type="range" name="size-s" min="10" max="100" value="24" step="0.5">
+          <input type="number" name="size-n" min="10" max="200" value="24">
+          <label title="Centimetres if unchecked"><input type="checkbox" name="size-inches"checked> inches</label>
 
-        <p class="note">Note: screen size is measured diagonally.</p>
 
-        <label>Aspect ratio
-          <select name="aspect-ratio">
-            <option value="16:9" selected>16:9</option>
-            <option value="16:10">16:10</option>
-            <option value="4:3">4:3</option>
-            <option value="21:9">21:9</option>
-          </select>
-        </label>
+          <p class="note">Note: screen size is measured diagonally.</p>
 
-      </fieldset>
+          <label>Aspect ratio
+            <select name="aspect-ratio">
+              <option value="16:9" selected>16:9</option>
+              <option value="16:10">16:10</option>
+              <option value="4:3">4:3</option>
+              <option value="21:9">21:9</option>
+              <option value="32:9">32:9</option>
+            </select>
+          </label>
 
-      <fieldset class="units">
-        <legend>Units</legend>
-        <label><input type="radio" name="units" value="inches" checked>
-          Inches</label>
-        <label><input type="radio" name="units" value="centimetres">
-          Centimetres</label>
-      </fieldset>
-    </form>
+        </fieldset>
+      </form>
 
-    <p class="disclaimer">Yes, I know you don't sit in the middle of a car like that :p</p>
+      <p id="debug"></p>
 
-    <p id="debug"></p>
-
+    </div>
     <script src="fovcalc.js"></script>
   </body>
 </html>
