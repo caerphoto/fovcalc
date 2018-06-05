@@ -5,6 +5,7 @@
   var FOV_COLOR = 'rgba(255, 0, 0, 0.7)';
   var HEAD_SIZE = 4;
   var CAR_LENGTH = 460; // centimetres
+  var BACKGROUND_COLOR = '#444';
 
   var $form = D.querySelector('form');
 
@@ -179,7 +180,7 @@
     },
 
     render: function (images) {
-      this.context.fillStyle = '#222';
+      this.context.fillStyle = BACKGROUND_COLOR;
       this.context.fillRect(0, 0, this.w, this.h);
       this.drawCarImages(images);
       this.drawViewLines();
