@@ -9,7 +9,8 @@ html {
   background: -moz-linear-gradient(top,    hsl(203,60%,80%) 0%, hsl(210,35%,90%) 49%, hsl(103,25%,90%) 51%, hsl(80,55%,70%) 100%);
   background: -webkit-linear-gradient(top, hsl(203,60%,80%) 0%, hsl(210,35%,90%) 49%, hsl(103,25%,90%) 51%, hsl(80,55%,70%) 100%);
   background: linear-gradient(to bottom,   hsl(203,60%,80%) 0%, hsl(210,35%,90%) 49%, hsl(103,25%,90%) 51%, hsl(80,55%,70%) 100%);
-  height: 100%;
+  height: 100vh;
+  background-attachment: fixed;
 }
 
 body {
