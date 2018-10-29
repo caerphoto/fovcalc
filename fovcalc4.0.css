@@ -5,22 +5,19 @@
 html {
   padding: 0;
   margin: 0;
-  background: #c6e1f2;
+  background: #525E65;
   height: 100vh;
   background-attachment: fixed;
 }
 
 body {
-  margin: 1em;
+  margin: 0;
   padding: 0;
   color: #eae8e8;
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
   font-size: 16px;
   line-height: 1.4;
-  background-color: rgba(0, 0, 0, 0.58);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0 1.5em 2em -1em rgba(100, 100, 100, 0.2);
 }
 
 .main {
@@ -46,7 +43,7 @@ h1 {
 
 .note {
   font-size: 80%;
-  color: #555;
+  color: #aaa;
   letter-spacing: 1px;
   margin: 0.5em 0 0.7em;
   clear: both;
@@ -125,6 +122,60 @@ canvas {
   cursor: crosshair;
   font: inherit;
   border-radius: 3px;
+}
+
+.slider {
+  background: #333;
+  border: 0.06em solid #000;
+  height: 1.25em;
+  width: calc(100% - 11em);
+  float: left;
+  clear: left;
+  padding: 0;
+  position: relative;
+}
+
+.slider__track {
+  /* Visual track */
+  position: absolute;
+  top: 0.4em;
+  left: 0.5em;
+  right: 0.5em;
+  height: 0.3em;
+  background-color: #666;
+  border-top: 0.05em solid #000;
+  border-bottom: 0.05em solid #999;
+  z-index: 1;
+}
+
+.slider__thumb-container {
+  /* For easier positioning of thumb */
+  position: absolute;
+  top: 0.06em;
+  left: 0.5em;
+  right: 0.5em;
+  bottom: 0;
+  z-index: 2;
+}
+
+.slider__thumb {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1em;
+  margin-left: -0.5em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: #F1935B;
+  box-shadow:
+    inset 1px 1px 2px rgba(255, 180, 100, 0.8),
+    inset -1px -1px 2px rgba(0, 0, 64, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.slider__thumb:hover {
+  background-color: #fb7322;
+  border-color: rgba(160, 0, 0, 0.5);
 }
 
 @media (max-width: 56em) {

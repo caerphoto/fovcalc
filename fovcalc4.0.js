@@ -8,6 +8,7 @@
   var BACKGROUND_COLOR = '#444';
 
   var $form = D.querySelector('form');
+  var sliders = {};
 
   var carImages = {
     top: new Image(),
@@ -231,18 +232,174 @@
     }
   };
 
+  function has(obj, prop) {
+    return Object.hasOwnProperty.call(obj, prop);
+  }
+
+  var Slider = function (options) {
+    var requiredProperties = ['min', 'max', 'step', 'el'];
+    var hasAllProperties = requiredProperties.every(function (prop) {
+      return has(options, prop);
+    });
+
+    if (!hasAllProperties) {
+      throw new Error('Missing required options. Supplied: ' +
+        Object.keys(options).join(', '));
+    }
+
+    this.properties = {};
+    requiredProperties.forEach(function (prop) {
+      this.properties[prop] = options[prop];
+    }.bind(this));
+
+    if (has(options, 'value')) {
+      this.properties.value = options.value;
+    } else {
+      this.properties.value = options.min;
+    }
+
+    this.el = this.properties.el;
+    this.els = {};
+    this.els.container = document.createElement('div');
+    this.els.container.className = 'slider';
+    this.els.track = document.createElement('div');
+    this.els.track.className = 'slider__track';
+    this.els.thumbContainer = document.createElement('div');
+    this.els.thumbContainer.className = 'slider__thumb-container';
+    this.els.thumb = document.createElement('div');
+    this.els.thumb.className = 'slider__thumb';
+
+    this.els.thumbContainer.appendChild(this.els.thumb);
+    this.els.container.appendChild(this.els.thumbContainer);
+    this.els.container.appendChild(this.els.track);
+    this.el.appendChild(this.els.container);
+
+    document.body.addEventListener('mousedown', this.onMouseDown.bind(this));
+    document.body.addEventListener('mousemove', this.onMouseMove.bind(this));
+    document.body.addEventListener('mouseup', this.onMouseUp.bind(this));
+    document.body.addEventListener('touchstart', this.onMouseDown.bind(this));
+    document.body.addEventListener('touchmove', this.onMouseMove.bind(this));
+    document.body.addEventListener('touchend', this.onMouseUp.bind(this));
+
+    this.eventHandlers = {};
+
+    setTimeout(function () {
+      this.updateSliderPosition();
+    }.bind(this), 0);
+  };
+
+  Slider.prototype.updateSliderPosition = function () {
+    var min = this.properties.min;
+    var max = this.properties.max;
+    var value = this.properties.value;
+
+    // User may be able to enter a value in the numerical input that is outside
+    // the slider's range.
+    value = Math.max(min, value);
+    value = Math.min(max, value);
+
+    var thumbPosition = ((value - min) / (max - min)) * 100;
+    this.els.thumb.style.left = thumbPosition + '%';
+  };
+
+  Slider.prototype.onMouseDown = function (event) {
+    var isOnSlider = Object.keys(this.els).some(function (key) {
+      return event.target === this.els[key];
+    }.bind(this));
+
+    if (!isOnSlider) return this;
+
+    this.isDragging = true;
+    this.onMouseMove(event);
+    return this;
+  };
+
+  Slider.prototype.onMouseMove = function (event) {
+    if (!this.isDragging) return;
+    event.preventDefault();
+
+    var rect = this.els.thumbContainer.getBoundingClientRect();
+    var x = (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
+    if (x < 0) x = 0;
+    if (x >= rect.width) x = rect.width;
+
+    var step = this.properties.step;
+    var normalizedValue = (x / rect.width);
+    var min = this.properties.min;
+    var max = this.properties.max;
+
+    var newValue = min + (max - min) * normalizedValue;
+    var roundedValue = Math.round(newValue / step) * step;
+    this.setValue(roundedValue);
+
+    return this;
+  };
+
+  Slider.prototype.onMouseUp = function () {
+    this.isDragging = false;
+    return this;
+  };
+
+  Slider.prototype.on = function (eventName, handler) {
+    if (this.eventHandlers[eventName]) {
+      this.eventHandlers[eventName].push(handler);
+    } else {
+      this.eventHandlers[eventName] = [handler];
+    }
+
+    return this;
+  };
+
+  Slider.prototype.off = function (eventName) {
+    var handlers;
+    if (!this.eventHandlers[eventName]) {
+      return [];
+    }
+
+    handlers = this.eventHandlers[eventName];
+    delete this.eventHandlers[eventName];
+    return handlers;
+  };
+
+  Slider.prototype.emit = function (eventName, newValue) {
+    if (!this.eventHandlers[eventName]) {
+      return;
+    }
+
+    this.eventHandlers[eventName].forEach(function (handler) {
+      handler.call(this, newValue);
+    }.bind(this));
+
+    return this;
+  };
+
+  Slider.prototype.setValue = function (value) {
+    this.properties.value = value;
+    this.updateSliderPosition();
+    this.emit('change', value);
+    return this;
+  };
+
+  Slider.prototype.getValue = function () {
+    return this.properties.value;
+  };
+
   function formChange(event) {
     var el = (event && event.target) || { name: null };
     var relatedInputs = {
-      'distance-n': 'distance-s',
+      'distance-n': 'distance',
       'distance-s': 'distance-n',
-      'size-n': 'size-s',
+      'size-n': 'size',
       'size-s': 'size-n'
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
 
-    if (/-s$|-n$/.test(el.name)) {
-      $form.elements[relatedInputs[el.name]].value = el.value;
+    if (el.name) {
+      if (/-s$/.test(el.name)) {
+        $form.elements[relatedInputs[el.name]].value = el.value;
+      } else {
+        sliders[relatedInputs[el.name]].setValue(el.value);
+      }
     }
 
     ['distance', 'size'].forEach(function (key) {
@@ -275,6 +432,37 @@
       formChange();
     });
 
+    sliders.distance = new Slider({
+      min: 10,
+      max: 200,
+      step: 1,
+      value: 37,
+      el: document.querySelector('#slider-distance')
+    });
 
+    sliders.size = new Slider({
+      min: 10,
+      max: 100,
+      step: 0.5,
+      value: 24,
+      el: document.querySelector('#slider-size')
+    });
+
+    sliders.distance.on('change', function () {
+      formChange({
+        target: {
+          name: 'distance-s',
+          value: this.getValue()
+        }
+      });
+    });
+    sliders.size.on('change', function () {
+      formChange({
+        target: {
+          name: 'size-s',
+          value: this.getValue()
+        }
+      });
+    });
   });
 }(window.document));
