@@ -41,6 +41,7 @@
     headX: 195,
     headTY: 92,
     headSY: 199,
+    rrY: 287, // RaceRoom FoV multiplier position
     xOffset: 40,
     textHeight: 1,
 
@@ -93,12 +94,37 @@
       this.monitor.ratio = newRatio;
     },
 
+    degreesFromRadians: function (radians) {
+      return ((radians * 180) / Math.PI);
+    },
+
     getFieldsOfView: function () {
       var monSides = this.monitor.getSides();
       return {
         h: Math.atan((monSides.w / 2) / this.monitor.distance) * 2,
         v: Math.atan((monSides.h / 2) / this.monitor.distance) * 2,
       };
+    },
+
+    gameSpecific: {
+      r3e: function (degrees) {
+        // See https://www.racedepartment.com/threads/fov-setting-multiplier-explained.142992/
+        // Basically, RaceRoom FoV is a multiplier of the default 58 degree VFoV.
+        return Math.round((degrees * 10) / 58) / 10;
+      },
+      dirt: function (degrees) {
+        if (degrees > 70) {
+          return '1.0 !';
+        }
+        if (degrees < 30) {
+          return '0.0 !';
+        }
+        return ((degrees - 30) / 40).toFixed(1);
+      },
+      f1: function (degrees) {
+        var scale = Math.round(((degrees - 77) / 2)) / 20;
+        return scale.toString().replace('-', '\u2212');
+      },
     },
 
     drawCarImages: function (images) {
@@ -165,10 +191,22 @@
       var fovs = this.getFieldsOfView();
       var yOffset = this.textHeight / 3;
       var precision;
+      var games = {
+        r3e: 0,
+        rbr: 0,
+        dirt: 0,
+        f1: 0
+      };
 
-      // Convert to degrees
-      fovs.h = ((180 * fovs.h) / Math.PI);
-      fovs.v = ((180 * fovs.v) / Math.PI);
+      // RBR FoV is measured in radians, so just use existing value
+      games.rbr = fovs.h.toFixed(2);
+
+      fovs.h = this.degreesFromRadians(fovs.h);
+      fovs.v = this.degreesFromRadians(fovs.v);
+
+      games.r3e = this.gameSpecific.r3e(fovs.v);
+      games.dirt = this.gameSpecific.dirt(fovs.v);
+      games.f1 = this.gameSpecific.f1(fovs.h);
 
       precision = fovs.h > 100 ? 3 : 2;
       fovs.h = fovs.h.toPrecision(precision);
@@ -177,6 +215,10 @@
 
       ctx.fillText(fovs.h + '\u00b0', 5, this.headTY + yOffset);
       ctx.fillText(fovs.v + '\u00b0', 5, this.headSY + yOffset);
+      ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, this.rrY + yOffset);
+      ctx.fillText('RBR: ' + games.rbr, 100, this.rrY + yOffset);
+      ctx.fillText('DiRT: ' + games.dirt, 205, this.rrY + yOffset);
+      ctx.fillText('F1: ' + games.f1, 300, this.rrY + yOffset);
     },
 
     render: function (images) {
