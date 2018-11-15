@@ -34,7 +34,7 @@
     }
   };
 
-  var canvas = {
+  var diagram = {
     el: null,
     context: null,
     w: 0,
@@ -403,24 +403,24 @@
     }
 
     ['distance', 'size'].forEach(function (key) {
-      canvas.measurements[key] = {
+      diagram.measurements[key] = {
         value: parseInt($form.elements[key + '-n'].value, 10),
         isInches: $form.elements[key + '-inches'].checked
       };
     });
 
-    canvas.monitor.distance = canvas.pixelsFromUnits(
-      canvas.measurements.distance.value,
-      canvas.measurements.distance.isInches);
+    diagram.monitor.distance = diagram.pixelsFromUnits(
+      diagram.measurements.distance.value,
+      diagram.measurements.distance.isInches);
 
-    canvas.monitor.diagonalSize = canvas.pixelsFromUnits(
-      canvas.measurements.size.value,
-      canvas.measurements.size.isInches);
+    diagram.monitor.diagonalSize = diagram.pixelsFromUnits(
+      diagram.measurements.size.value,
+      diagram.measurements.size.isInches);
 
-    canvas.monitor.ratio = ratio;
+    diagram.monitor.ratio = ratio;
 
-    canvas.render(carImages);
-    canvas.alreadyUpdated = true;
+    diagram.render(carImages);
+    diagram.alreadyUpdated = true;
   }
 
   window.addEventListener('load', function () {
@@ -428,7 +428,7 @@
     $form.addEventListener('change', formChange);
 
     carImages.load(function () {
-      canvas.initialize();
+      diagram.initialize();
       formChange();
     });
 
