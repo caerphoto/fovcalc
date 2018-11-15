@@ -5,7 +5,7 @@
 html {
   padding: 0;
   margin: 0;
-  background: #2F302F;
+  background: #9dbbcc;
   height: 100vh;
   background-attachment: fixed;
 }
@@ -13,24 +13,23 @@ html {
 body {
   margin: 0;
   padding: 0;
-  color: #eae8e8;
+  color: #333;
   font-family: "Montserrat", sans-serif;
-  font-weight: 300;
   font-size: 16px;
   line-height: 1.4;
 }
 
 .main {
-  max-width: 50em;
+  max-width: 52em;
   margin: 0 auto;
 }
 
 a {
-  color: #F1935B;
+  color: #c30000;
 }
 
 a:visited {
-  color: #b5002f;
+  color: #980128;
 }
 
 .caption {
@@ -43,7 +42,7 @@ h1 {
 
 .note {
   font-size: 80%;
-  color: #aaa;
+  color: #737373;
   letter-spacing: 1px;
   margin: 0.5em 0 0.7em;
   clear: both;
@@ -106,22 +105,19 @@ input[type="number"] + label {
     float: left;
 }
 
-canvas {
-  box-sizing: content-box;
+#fov-preview {
   display: block;
-  width: 400px;
-  height: 300px;
-  background-color: #000;
+  max-width: 820px;
+  max-height: 620px;
   border: none;
   margin: 0 auto;
   cursor: crosshair;
   font: inherit;
-  border-radius: 3px;
 }
 
 .slider {
-  background: #444;
-  border: 0.06em solid #222;
+  background: #bddcec;
+  border: 0.06em solid #708894;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
   height: 1.3em;
   width: calc(100% - 11em);
@@ -138,7 +134,7 @@ canvas {
   left: 0.5em;
   right: 0.5em;
   height: 0.3em;
-  background-color: #666;
+  background-color: #78a3ca;
   border-top: 0.05em solid #333;
   border-bottom: 0.05em solid #777;
   z-index: 1;
@@ -180,6 +176,10 @@ canvas {
     margin: 0.5em;
     padding: 0 0.5em;
   }
+
+  #fov-preview {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 580px) {
@@ -194,7 +194,7 @@ canvas {
     margin: 0 0 0.5em;
   }
 
-  canvas {
-    border: none;
+  #fov-preview {
+    max-width: 100%;
   }
 }

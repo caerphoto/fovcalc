@@ -1,11 +1,12 @@
 (function (D) {
   'use strict';
 
-  var MONITOR_COLOR = '#ff925b';
-  var FOV_COLOR = 'rgba(255, 0, 0, 0.7)';
-  var HEAD_SIZE = 4;
-  var CAR_LENGTH = 460; // centimetres
-  var BACKGROUND_COLOR = '#444';
+  var MONITOR_COLOR = '#f00';
+  var MONITOR_THICKNESS = 6;
+  var FOV_COLOR = '#d77';
+  var HEAD_SIZE = 6;
+  var CAR_LENGTH = 495; // centimetres, used to calculate scale for monitors
+  var BACKGROUND_COLOR = '#9dbbcc';
 
   var $form = D.querySelector('form');
   var sliders = {};
@@ -20,8 +21,9 @@
     load: function (callback) {
       this.top.addEventListener('load', this.imageLoaded.bind(this));
       this.side.addEventListener('load', this.imageLoaded.bind(this));
-      this.top.src = 'car-top.png';
-      this.side.src = 'car-side.png';
+
+      this.top.src = 'bentley-top.svg';
+      this.side.src = 'bentley-side.svg';
       this.onReady = callback;
     },
     imageLoaded: function () {
@@ -39,11 +41,15 @@
     context: null,
     w: 0,
     h: 0,
-    headX: 195,
-    headTY: 92,
-    headSY: 199,
-    rrY: 287, // RaceRoom FoV multiplier position
-    xOffset: 40,
+    headPositions: {
+      normX: 0.5, // normalized value, 0-1
+      normTY: 0.37,
+      normSY: 0.2,
+      x: 0,
+      ty: 0,
+      sy: 0
+    },
+    xOffset: 0,
     textHeight: 1,
 
     measurements: {
@@ -70,10 +76,10 @@
 
     initialize: function () {
       this.el = D.querySelector('#fov-preview');
-      this.w = this.el.width = this.el.clientWidth;
-      this.h = this.el.height = this.el.clientHeight;
-      this.context = this.el.getContext('2d');
+      this.w = this.el.width = 820;
+      this.h = this.el.height = 620;
 
+      this.context = this.el.getContext('2d');
       this.context.fillStyle = MONITOR_COLOR;
       this.context.strokeStyle = FOV_COLOR;
       this.context.font = window.getComputedStyle(D.body).
@@ -128,62 +134,72 @@
       },
     },
 
+    setHeadPositions: function (carImages) {
+      this.headPositions.x = carImages.top.width * this.headPositions.normX;
+      this.headPositions.ty = carImages.top.height * this.headPositions.normTY;
+      this.headPositions.sy = carImages.side.height * this.headPositions.normSY +
+        carImages.top.height + 10;
+    },
+
     drawCarImages: function (images) {
       var ctx = this.context;
-      var FADE_COLOR = 'rgba(0, 0, 0, 0.3)';
-      var x = Math.round((this.w - images.top.width) / 2) + this.xOffset;
-      var y = Math.round((this.h / 2 - images.top.height) / 2);
 
-      ctx.drawImage(images.top, x, y + 15);
-      ctx.drawImage(images.side, x, y * 2 + images.side.height + 10);
+      ctx.globalAlpha = 0.5;
+      ctx.drawImage(images.top, 0, 0);
+      ctx.drawImage(images.side, 0, images.top.height + 10);
 
-      ctx.fillStyle = FADE_COLOR;
-      ctx.fillRect(0, 0, this.w, this.h);
+      ctx.globalAlpha = 1;
       ctx.fillStyle = MONITOR_COLOR;
+      this.setHeadPositions(images);
     },
 
     drawHeadsAndMonitors: function () {
       var ctx = this.context;
       var pi2 = Math.PI * 2;
-      var headX = this.headX + this.xOffset;
+      var headX = this.headPositions.x + this.xOffset;
+      var headTY = this.headPositions.ty;
+      var headSY = this.headPositions.sy;
       var monX = headX - this.monitor.distance;
       var monSides = this.monitor.getSides();
-      var monTY = this.headTY - monSides.w / 2;
-      var monSY = this.headSY - monSides.h / 2;
+      var monTY = headTY - monSides.w / 2;
+      var monSY = headSY - monSides.h / 2;
 
       ctx.beginPath();
-      ctx.arc(headX, this.headTY, HEAD_SIZE, 0, pi2);
+      ctx.arc(headX, headTY, HEAD_SIZE, 0, pi2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(headX, this.headSY, HEAD_SIZE, 0, pi2);
+      ctx.arc(headX, headSY, HEAD_SIZE, 0, pi2);
       ctx.fill();
 
-      ctx.fillRect(monX, monTY, 3, monSides.w);
-      ctx.fillRect(monX, monSY, 3, monSides.h);
+
+      ctx.fillRect(monX, monTY, MONITOR_THICKNESS, monSides.w);
+      ctx.fillRect(monX, monSY, MONITOR_THICKNESS, monSides.h);
     },
 
     drawViewLines: function () {
       var ctx = this.context;
       var monSides = this.monitor.getSides();
-      var headX = this.headX + this.xOffset;
+      var headX = this.headPositions.x + this.xOffset;
       var fovW = headX - 5;
       var fovTH = (monSides.w * (fovW / this.monitor.distance)) / 2;
       var fovSH = (monSides.h * (fovW / this.monitor.distance)) / 2;
+      var headTY = this.headPositions.ty;
+      var headSY = this.headPositions.sy;
 
       // Top view
       ctx.beginPath();
-      ctx.moveTo(headX, this.headTY);
-      ctx.lineTo(headX - fovW, this.headTY - fovTH);
-      ctx.moveTo(headX, this.headTY);
-      ctx.lineTo(headX - fovW, this.headTY + fovTH);
+      ctx.moveTo(headX, headTY);
+      ctx.lineTo(headX - fovW, headTY - fovTH);
+      ctx.moveTo(headX, headTY);
+      ctx.lineTo(headX - fovW, headTY + fovTH);
       ctx.stroke();
 
       // Top view
       ctx.beginPath();
-      ctx.moveTo(headX, this.headSY);
-      ctx.lineTo(headX - fovW, this.headSY - fovSH);
-      ctx.moveTo(headX, this.headSY);
-      ctx.lineTo(headX - fovW, this.headSY + fovSH);
+      ctx.moveTo(headX, headSY);
+      ctx.lineTo(headX - fovW, headSY - fovSH);
+      ctx.moveTo(headX, headSY);
+      ctx.lineTo(headX - fovW, headSY + fovSH);
       ctx.stroke();
     },
 
@@ -191,6 +207,10 @@
       var ctx = this.context;
       var fovs = this.getFieldsOfView();
       var yOffset = this.textHeight / 3;
+      var fovX = this.headPositions.x + HEAD_SIZE * 2 + 5;
+      var headTY = this.headPositions.ty;
+      var headSY = this.headPositions.sy;
+      var otherTextY = this.h - 10;
       var precision;
       var games = {
         r3e: 0,
@@ -214,12 +234,13 @@
       precision = fovs.v > 100 ? 3 : 2;
       fovs.v = fovs.v.toPrecision(precision);
 
-      ctx.fillText(fovs.h + '\u00b0', 5, this.headTY + yOffset);
-      ctx.fillText(fovs.v + '\u00b0', 5, this.headSY + yOffset);
-      ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, this.rrY + yOffset);
-      ctx.fillText('RBR: ' + games.rbr, 100, this.rrY + yOffset);
-      ctx.fillText('DiRT: ' + games.dirt, 205, this.rrY + yOffset);
-      ctx.fillText('F1: ' + games.f1, 300, this.rrY + yOffset);
+      ctx.fillText(fovs.h + '\u00b0', fovX, headTY + yOffset);
+      ctx.fillText(fovs.v + '\u00b0', fovX, headSY + yOffset);
+
+      ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY + yOffset);
+      ctx.fillText('RBR: ' + games.rbr, 100, otherTextY + yOffset);
+      ctx.fillText('DiRT: ' + games.dirt, 205, otherTextY + yOffset);
+      ctx.fillText('F1: ' + games.f1, 300, otherTextY + yOffset);
     },
 
     render: function (images) {
@@ -288,100 +309,102 @@
     }.bind(this), 0);
   };
 
-  Slider.prototype.updateSliderPosition = function () {
-    var min = this.properties.min;
-    var max = this.properties.max;
-    var value = this.properties.value;
+  Slider.prototype = {
+    updateSliderPosition: function () {
+      var min = this.properties.min;
+      var max = this.properties.max;
+      var value = this.properties.value;
 
-    // User may be able to enter a value in the numerical input that is outside
-    // the slider's range.
-    value = Math.max(min, value);
-    value = Math.min(max, value);
+      // User may be able to enter a value in the numerical input that is outside
+      // the slider's range.
+      value = Math.max(min, value);
+      value = Math.min(max, value);
 
-    var thumbPosition = ((value - min) / (max - min)) * 100;
-    this.els.thumb.style.left = thumbPosition + '%';
-  };
+      var thumbPosition = ((value - min) / (max - min)) * 100;
+      this.els.thumb.style.left = thumbPosition + '%';
+    },
 
-  Slider.prototype.onMouseDown = function (event) {
-    var isOnSlider = Object.keys(this.els).some(function (key) {
-      return event.target === this.els[key];
-    }.bind(this));
+    onMouseDown: function (event) {
+      var isOnSlider = Object.keys(this.els).some(function (key) {
+        return event.target === this.els[key];
+      }.bind(this));
 
-    if (!isOnSlider) return this;
+      if (!isOnSlider) return this;
 
-    this.isDragging = true;
-    this.onMouseMove(event);
-    return this;
-  };
+      this.isDragging = true;
+      this.onMouseMove(event);
+      return this;
+    },
 
-  Slider.prototype.onMouseMove = function (event) {
-    if (!this.isDragging) return;
-    event.preventDefault();
+    onMouseMove: function (event) {
+      if (!this.isDragging) return;
+      event.preventDefault();
 
-    var rect = this.els.thumbContainer.getBoundingClientRect();
-    var x = (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
-    if (x < 0) x = 0;
-    if (x >= rect.width) x = rect.width;
+      var rect = this.els.thumbContainer.getBoundingClientRect();
+      var x = (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
+      if (x < 0) x = 0;
+      if (x >= rect.width) x = rect.width;
 
-    var step = this.properties.step;
-    var normalizedValue = (x / rect.width);
-    var min = this.properties.min;
-    var max = this.properties.max;
+      var step = this.properties.step;
+      var normalizedValue = (x / rect.width);
+      var min = this.properties.min;
+      var max = this.properties.max;
 
-    var newValue = min + (max - min) * normalizedValue;
-    var roundedValue = Math.round(newValue / step) * step;
-    this.setValue(roundedValue);
+      var newValue = min + (max - min) * normalizedValue;
+      var roundedValue = Math.round(newValue / step) * step;
+      this.setValue(roundedValue);
 
-    return this;
-  };
+      return this;
+    },
 
-  Slider.prototype.onMouseUp = function () {
-    this.isDragging = false;
-    return this;
-  };
+    onMouseUp: function () {
+      this.isDragging = false;
+      return this;
+    },
 
-  Slider.prototype.on = function (eventName, handler) {
-    if (this.eventHandlers[eventName]) {
-      this.eventHandlers[eventName].push(handler);
-    } else {
-      this.eventHandlers[eventName] = [handler];
+    on: function (eventName, handler) {
+      if (this.eventHandlers[eventName]) {
+        this.eventHandlers[eventName].push(handler);
+      } else {
+        this.eventHandlers[eventName] = [handler];
+      }
+
+      return this;
+    },
+
+    off: function (eventName) {
+      var handlers;
+      if (!this.eventHandlers[eventName]) {
+        return [];
+      }
+
+      handlers = this.eventHandlers[eventName];
+      delete this.eventHandlers[eventName];
+      return handlers;
+    },
+
+    emit: function (eventName, newValue) {
+      if (!this.eventHandlers[eventName]) {
+        return;
+      }
+
+      this.eventHandlers[eventName].forEach(function (handler) {
+        handler.call(this, newValue);
+      }.bind(this));
+
+      return this;
+    },
+
+    setValue: function (value) {
+      this.properties.value = value;
+      this.updateSliderPosition();
+      this.emit('change', value);
+      return this;
+    },
+
+    getValue: function () {
+      return this.properties.value;
     }
-
-    return this;
-  };
-
-  Slider.prototype.off = function (eventName) {
-    var handlers;
-    if (!this.eventHandlers[eventName]) {
-      return [];
-    }
-
-    handlers = this.eventHandlers[eventName];
-    delete this.eventHandlers[eventName];
-    return handlers;
-  };
-
-  Slider.prototype.emit = function (eventName, newValue) {
-    if (!this.eventHandlers[eventName]) {
-      return;
-    }
-
-    this.eventHandlers[eventName].forEach(function (handler) {
-      handler.call(this, newValue);
-    }.bind(this));
-
-    return this;
-  };
-
-  Slider.prototype.setValue = function (value) {
-    this.properties.value = value;
-    this.updateSliderPosition();
-    this.emit('change', value);
-    return this;
-  };
-
-  Slider.prototype.getValue = function () {
-    return this.properties.value;
   };
 
   function formChange(event) {
