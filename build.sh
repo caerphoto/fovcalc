@@ -16,5 +16,5 @@ uglifyjs -m --warn "${INPUT_JS[@]}" > build/$JS_FILENAME &&
 cp fovcalc.css build/$CSS_FILENAME &&
   echo $CSS_FILENAME created
 
-sed -e "s/CSS_FILENAME_PLACEHOLDER/$CSS_FILENAME/;s/JS_FILENAME_PLACEHOLDER/$JS_FILENAME/" fovcalc.html > build/fovcalc.html &&
+sed -e "s/fovcalc.css/$CSS_FILENAME/;s/fovcalc.js/$JS_FILENAME/" fovcalc.html > build/fovcalc.html &&
   echo Filenames replaced in build/fovcalc.html
