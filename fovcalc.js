@@ -8,6 +8,10 @@
   var CAR_LENGTH = 495; // centimetres, used to calculate scale for monitors
   var BACKGROUND_COLOR = '#9dbbcc';
 
+  // These two should match the canvas element's size at normal screen size
+  var CANVAS_WIDTH = 600;
+  var CANVAS_HEIGHT = 470;
+
   var $form = D.querySelector('form');
   var sliders = {};
 
@@ -76,8 +80,8 @@
 
     initialize: function () {
       this.el = D.querySelector('#fov-preview');
-      this.w = this.el.width = 820;
-      this.h = this.el.height = 620;
+      this.w = this.el.width = CANVAS_WIDTH;
+      this.h = this.el.height = CANVAS_HEIGHT;
 
       this.context = this.el.getContext('2d');
       this.context.fillStyle = MONITOR_COLOR;
@@ -417,7 +421,7 @@
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
 
-    if (el.name) {
+    if (el.name && el.name !== 'aspect-ratio') {
       if (/-s$/.test(el.name)) {
         $form.elements[relatedInputs[el.name]].value = el.value;
       } else {
