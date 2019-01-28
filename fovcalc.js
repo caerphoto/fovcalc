@@ -243,8 +243,12 @@
 
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY + yOffset);
       ctx.fillText('RBR: ' + games.rbr, 100, otherTextY + yOffset);
-      ctx.fillText('DiRT: ' + games.dirt, 205, otherTextY + yOffset);
       ctx.fillText('F1: ' + games.f1, 300, otherTextY + yOffset);
+      if (/!/.test(games.dirt)) {
+        ctx.globalAlpha = 0.3;
+      }
+      ctx.fillText('DiRT: ' + games.dirt, 205, otherTextY + yOffset);
+      ctx.globalAlpha = 1;
     },
 
     render: function (images) {
@@ -424,7 +428,7 @@
     if (el.name && el.name !== 'aspect-ratio') {
       if (/-s$/.test(el.name)) {
         $form.elements[relatedInputs[el.name]].value = el.value;
-      } else {
+      } else if (/-n$/.test(el.name)) {
         sliders[relatedInputs[el.name]].setValue(el.value);
       }
     }
