@@ -46,7 +46,7 @@
     w: 0,
     h: 0,
     headPositions: {
-      normX: 0.5, // normalized value, 0-1
+      normX: 0.58, // normalized value, 0-1
       normTY: 0.37,
       normSY: 0.2,
       x: 0,
