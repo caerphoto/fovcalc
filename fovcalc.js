@@ -123,14 +123,19 @@
         // Basically, RaceRoom FoV is a multiplier of the default 58 degree VFoV.
         return Math.round((degrees * 10) / 58) / 10;
       },
-      dirt: function (degrees) {
-        if (degrees > 70) {
-          return '1.0 !';
-        }
-        if (degrees < 30) {
-          return '0.0 !';
-        }
+      dr: function (degrees) {
+        if (degrees < 30) return '0.0!';
+        if (degrees > 70) return '1.0!';
         return ((degrees - 30) / 40).toFixed(1);
+      },
+      dr2: function (degrees) {
+        // DR2 slider changes FoV in increments of 5° from 30 to 55, then 3°
+        // after that, up to 70°.
+        if (degrees < 30) return '-5!';
+        if (degrees > 70) return '5!';
+        // 56.5° is where the slider transitions from 0 to positive numbers
+        if (degrees >= 56.5) return Math.round(((degrees - 56.5) / 13.5) * 5);
+        return -(5 - Math.round(((degrees - 30) / 26.5) * 5));
       },
       f1: function (degrees) {
         var scale = Math.round(((degrees - 77) / 2)) / 20;
@@ -219,7 +224,8 @@
       var games = {
         r3e: 0,
         rbr: 0,
-        dirt: 0,
+        dr: 0,
+        dr2: 0,
         f1: 0
       };
 
@@ -230,7 +236,8 @@
       fovs.v = this.degreesFromRadians(fovs.v);
 
       games.r3e = this.gameSpecific.r3e(fovs.v);
-      games.dirt = this.gameSpecific.dirt(fovs.v);
+      games.dr = this.gameSpecific.dr(fovs.v);
+      games.dr2 = this.gameSpecific.dr2(fovs.v);
       games.f1 = this.gameSpecific.f1(fovs.h);
 
       precision = fovs.h > 100 ? 3 : 2;
@@ -243,12 +250,16 @@
 
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY + yOffset);
       ctx.fillText('RBR: ' + games.rbr, 100, otherTextY + yOffset);
-      ctx.fillText('F1: ' + games.f1, 300, otherTextY + yOffset);
-      if (/!/.test(games.dirt)) {
-        ctx.globalAlpha = 0.3;
-      }
-      ctx.fillText('DiRT: ' + games.dirt, 205, otherTextY + yOffset);
+
+      if (/!/.test(games.dr)) ctx.globalAlpha = 0.3;
+      ctx.fillText('DiRT Rally: ' + games.dr, 200, otherTextY + yOffset);
       ctx.globalAlpha = 1;
+
+      if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
+      ctx.fillText('DiRT Rally 2: ' + games.dr2, 340, otherTextY + yOffset);
+      ctx.globalAlpha = 1;
+
+      ctx.fillText('F1: ' + games.f1, 495, otherTextY + yOffset);
     },
 
     render: function (images) {
