@@ -124,18 +124,27 @@
         return Math.round((degrees * 10) / 58) / 10;
       },
       dr: function (degrees) {
-        if (degrees < 30) return '0.0!';
-        if (degrees > 70) return '1.0!';
+        if (degrees < 29.5) return '0.0!';
+        if (degrees >= 70.5) return '1.0!';
         return ((degrees - 30) / 40).toFixed(1);
       },
       dr2: function (degrees) {
+        var pos;
         // DR2 slider changes FoV in increments of 5° from 30 to 55, then 3°
         // after that, up to 70°.
-        if (degrees < 30) return '-5!';
-        if (degrees > 70) return '5!';
+        // u2212 is a full-width minus sign (i.e. same width as + sign)
+        if (degrees < 29.5) return '\u22125!';
+        if (degrees >= 70.5) return '+5!';
         // 56.5° is where the slider transitions from 0 to positive numbers
-        if (degrees >= 56.5) return Math.round(((degrees - 56.5) / 13.5) * 5);
-        return -(5 - Math.round(((degrees - 30) / 26.5) * 5));
+        if (degrees >= 56.5) {
+          pos = Math.round(((degrees - 56.5) / 13.5) * 5);
+        } else {
+          pos = -(5 - Math.round(((degrees - 30) / 26.5) * 5));
+        }
+
+        if (pos === 0) return ' 0';
+        if (pos < 0) return '\u2212' + (-pos);
+        return '+' + pos;
       },
       f1: function (degrees) {
         var scale = Math.round(((degrees - 77) / 2)) / 20;
