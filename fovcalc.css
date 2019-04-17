@@ -156,7 +156,7 @@ input[type="number"] + label {
   height: 0.8em;
   margin-left: -0.4em;
   border-radius: 50%;
-  background-color: #F1935B;
+  background-color: #f10000;
   box-shadow:
     inset 1px 1px 2px rgba(255, 180, 100, 0.8),
     inset -1px -1px 2px rgba(0, 0, 64, 0.2),
@@ -165,7 +165,7 @@ input[type="number"] + label {
 }
 
 .slider__thumb:hover {
-  background-color: #fb7322;
+  background-color: #ff588d;
   border-color: rgba(160, 0, 0, 0.5);
 }
 
