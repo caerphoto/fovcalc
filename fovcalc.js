@@ -132,8 +132,8 @@
         var normalizedPos;
         var scaledPos;
         // u2212 is a full-width minus sign (i.e. same width as + sign)
-        if (degrees < 30) return '\u22125!';
-        if (degrees > 70) return '+5!';
+        if (Math.round(degrees) < 30) return '\u22125!';
+        if (Math.round(degrees) > 70) return '+5!';
 
         // Updated scaling formula by Reddit user GalaxyMaster_P:
         // https://www.reddit.com/r/dirtgame/comments/bgg61d/i_created_an_fov_editing_tool_for_dirt_rally_20/
