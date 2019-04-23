@@ -131,6 +131,7 @@
       dr2: function (degrees) {
         var normalizedPos;
         var scaledPos;
+        var normalizedOutput;
         // u2212 is a full-width minus sign (i.e. same width as + sign)
         if (Math.round(degrees) < 30) return '\u22125!';
         if (Math.round(degrees) > 70) return '+5!';
@@ -139,6 +140,10 @@
         // https://www.reddit.com/r/dirtgame/comments/bgg61d/i_created_an_fov_editing_tool_for_dirt_rally_20/
         normalizedPos = -Math.sqrt((degrees-75) / -20) + 1.5;
         scaledPos = Math.round(normalizedPos * 10) - 5;
+        normalizedOutput = ' (' + normalizedPos.toFixed(3) + ')';
+
+        // Currently don't do anything with normalizedOutput, as it's not a
+        // super useful value outside of some dubiously legal Cheat Engine use.
 
         if (scaledPos === 0) return ' 0';
         if (scaledPos < 0) return '\u2212' + (-scaledPos);
