@@ -3,11 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title>Field of view calculator &middot; andyf.me</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400" rel="stylesheet">
     <link rel="stylesheet" href="fovcalc.css">
 
-    <meta name="description" content="Simple app to calculate the mathematically correct field of view for your racing sim.">
-    <meta name="keywords" content="sim racing,simracing,racing simulator,fov,calculator,field of view,hfov,vfov,assetto corsa,project cars,rfactor">
+    <meta name="description" content="The easiest way to calculate the correct field of view for your racing sim.">
+    <meta name="keywords" content="sim racing,simracing,racing simulator,fov,calculator,field of view,hfov,vfov,assetto corsa,project cars,rfactor,dirt rally">
     <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=1, user-scalable=no, maximum-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -16,7 +15,7 @@
   <body>
     <div class="main">
       <h1>Field of view calculator</h1>
-      <p>Calculate the mathematically correct field of view for your racing simulator, based on <em>monitor size</em> and <em>viewing distance</em>.</p>
+      <p>A super simple way to calculate the mathematically correct field of view for your racing simulator, based on <em>monitor size</em> and <em>viewing distance</em>.</p>
       <p>Why do this? Watch <a
         href="https://www.youtube.com/watch?v=AbbxkX7kS_M">this video by Empty
         Box</a> for an explanation. Basically it's so things in the game look the
@@ -39,7 +38,6 @@
 
         <fieldset>
           <legend>Distance to screen</legend>
-          <!-- <input type="range" name="distance-s" min="10" max="200" value="37"> -->
           <div id="slider-distance"></div>
           <input type="number" name="distance-n" min="10" max="500" value="37">
           <label title="Centimetres if unchecked"><input type="checkbox" name="distance-inches" checked> inches</label>
@@ -47,11 +45,9 @@
 
         <fieldset>
           <legend>Screen size and shape</legend>
-          <!-- <input type="range" name="size-s" min="10" max="100" value="24" step="0.5"> -->
           <div id="slider-size"></div>
           <input type="number" name="size-n" min="10" max="200" value="24">
           <label title="Centimetres if unchecked"><input type="checkbox" name="size-inches"checked> inches</label>
-
 
           <p class="note">Note: screen size is measured diagonally.</p>
 
