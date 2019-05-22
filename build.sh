@@ -16,5 +16,8 @@ uglifyjs -m --warn "${INPUT_JS[@]}" > build/$JS_FILENAME &&
 cp fovcalc.css build/$CSS_FILENAME &&
   echo $CSS_FILENAME created
 
-sed -e "s/fovcalc.css/$CSS_FILENAME/;s/fovcalc.js/$JS_FILENAME/" fovcalc.html > build/fovcalc.html &&
+FAVICON_B64=$(cat favicon.png | openssl base64 | tr -d '\n') && echo "Base64-encoded favicon"
+
+sed -e "s/fovcalc.css/$CSS_FILENAME/;s/fovcalc.js/$JS_FILENAME/;s|favicon.png|data:image/png;base64,$FAVICON_B64|" fovcalc.html > build/fovcalc.html &&
   echo Filenames replaced in build/fovcalc.html
+
