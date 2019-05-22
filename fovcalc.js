@@ -46,9 +46,9 @@
     w: 0,
     h: 0,
     headPositions: {
-      normX: 0.58, // normalized value, 0-1
-      normTY: 0.37,
-      normSY: 0.2,
+      normX: 0.55, // normalized value, 0-1
+      normTY: 0.35,
+      normSY: 0.17,
       x: 0,
       ty: 0,
       sy: 0
@@ -227,6 +227,7 @@
     drawAngleText: function () {
       var ctx = this.context;
       var fovs = this.getFieldsOfView();
+      var hFov, vFov;
       var yOffset = this.textHeight / 3;
       var fovX = this.headPositions.x + HEAD_SIZE * 2 + 5;
       var headTY = this.headPositions.ty;
@@ -252,23 +253,24 @@
       games.dr2 = this.gameSpecific.dr2(fovs.v);
       games.f1 = this.gameSpecific.f1(fovs.h);
 
-      precision = fovs.h > 100 ? 3 : 2;
-      fovs.h = fovs.h.toPrecision(precision);
-      precision = fovs.v > 100 ? 3 : 2;
-      fovs.v = fovs.v.toPrecision(precision);
+      precision = fovs.h > 100 ? 4 : 3;
+      // u200a is a 'hair space'
+      hFov = fovs.h.toPrecision(precision).replace('.', '\u200a.\u200a');
+      precision = fovs.v > 100 ? 4 : 3;
+      vFov = fovs.v.toPrecision(precision).replace('.', '\u200a.\u200a');
 
-      ctx.fillText(fovs.h + '\u00b0', fovX, headTY + yOffset);
-      ctx.fillText(fovs.v + '\u00b0', fovX, headSY + yOffset);
+      ctx.fillText(hFov + '\u00b0', fovX, headTY + yOffset);
+      ctx.fillText(vFov + '\u00b0', fovX, headSY + yOffset);
 
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY + yOffset);
-      ctx.fillText('RBR: ' + games.rbr, 100, otherTextY + yOffset);
+      ctx.fillText('RBR: ' + games.rbr, 110, otherTextY + yOffset);
 
       if (/!/.test(games.dr)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally: ' + games.dr, 200, otherTextY + yOffset);
+      ctx.fillText('DiRT Rally: ' + games.dr, 210, otherTextY + yOffset);
       ctx.globalAlpha = 1;
 
       if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally 2: ' + games.dr2, 340, otherTextY + yOffset);
+      ctx.fillText('DiRT Rally 2: ' + games.dr2, 345, otherTextY + yOffset);
       ctx.globalAlpha = 1;
 
       ctx.fillText('F1: ' + games.f1, 495, otherTextY + yOffset);
