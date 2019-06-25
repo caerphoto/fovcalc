@@ -490,14 +490,14 @@
 
     sliders.distance = new Slider({
       min: 10,
-      max: 200,
+      max: 120,
       step: 1,
-      value: 37,
+      value: 40,
       el: document.querySelector('#slider-distance')
     });
 
     sliders.size = new Slider({
-      min: 10,
+      min: 19,
       max: 100,
       step: 0.5,
       value: 24,

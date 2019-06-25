@@ -73,7 +73,7 @@ legend {
 }
 
 input + label {
-  margin-top: 0.5em;
+  margin-top: 0.1em;
 }
 
 input,
@@ -93,7 +93,7 @@ input[type="number"] {
   padding: 0.2em;
   line-height: 1;
   width: 4em;
-  margin-left: 0.5em;
+  margin: 0 0 0 0.5em;
 }
 
 input[type="range"] {
@@ -118,6 +118,7 @@ input[type="number"] + label {
 }
 
 .slider {
+  margin-top: 0.1em;
   height: 1.3em;
   width: calc(100% - 11em);
   float: left;
@@ -143,7 +144,7 @@ input[type="number"] + label {
 .slider__thumb-container {
   /* For easier positioning of thumb */
   position: absolute;
-  top: 0.06em;
+  top: 0.03em;
   left: 0.5em;
   right: 0.5em;
   bottom: 0;
@@ -152,10 +153,10 @@ input[type="number"] + label {
 
 .slider__thumb {
   position: absolute;
-  top: 0.15em;
+  top: 0.13em;
   left: 50%;
-  width: 0.8em;
-  height: 0.8em;
+  width: 0.82em;
+  height: 0.82em;
   margin-left: -0.4em;
   border-radius: 50%;
   background-color: #f10000;
