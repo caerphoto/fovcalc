@@ -86,7 +86,7 @@
       this.context = this.el.getContext('2d');
       this.context.fillStyle = MONITOR_COLOR;
       this.context.strokeStyle = FOV_COLOR;
-      this.context.font = window.getComputedStyle(D.body).font;
+      this.context.font = '1em ' + window.getComputedStyle(D.body).fontFamily;
 
       // fontSize will be in pixels
       this.textHeight = parseFloat(window.getComputedStyle(D.body).fontSize, 10);
@@ -262,6 +262,8 @@
       ctx.fillText(hFov + '\u00b0', fovX, headTY + yOffset);
       ctx.fillText(vFov + '\u00b0', fovX, headSY + yOffset);
 
+
+      // Other games
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY + yOffset);
       ctx.fillText('RBR: ' + games.rbr, 110, otherTextY + yOffset);
 
