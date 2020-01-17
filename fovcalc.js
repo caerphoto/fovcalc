@@ -8,9 +8,10 @@
   var CAR_LENGTH = 495; // centimetres, used to calculate scale for monitors
   var BACKGROUND_COLOR = '#9dbbcc';
 
-  // These two should match the canvas element's size at normal screen size
+  // These two should match the canvas element's size (as specified in
+  // fovcalc.css) at normal screen size
   var CANVAS_WIDTH = 600;
-  var CANVAS_HEIGHT = 470;
+  var CANVAS_HEIGHT = 490;
 
   var $form = D.querySelector('form');
   var sliders = {};
@@ -150,8 +151,14 @@
         return '+' + scaledPos;
       },
       f1: function (degrees) {
+        function format(num) {
+          return num.toString().replace('-', '\u2212');
+        }
         var scale = Math.round(((degrees - 77) / 2)) / 20;
-        return scale.toString().replace('-', '\u2212');
+        return {
+          old: format(scale),
+          new: format(scale * 2)
+        };
       },
     },
 
@@ -232,7 +239,7 @@
       var fovX = this.headPositions.x + HEAD_SIZE * 2 + 5;
       var headTY = this.headPositions.ty;
       var headSY = this.headPositions.sy;
-      var otherTextY = this.h - 10;
+      var otherTextY = this.h - 35 + yOffset;
       var precision;
       var games = {
         r3e: 0,
@@ -264,18 +271,20 @@
 
 
       // Other games
-      ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY + yOffset);
-      ctx.fillText('RBR: ' + games.rbr, 110, otherTextY + yOffset);
+      ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY);
+      ctx.fillText('RBR: ' + games.rbr, 150, otherTextY);
+
+      ctx.fillText('F1: ' + games.f1.old, 300, otherTextY);
+      ctx.fillText('F1 (2019+): ' + games.f1.new, 400, otherTextY);
 
       if (/!/.test(games.dr)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally: ' + games.dr, 210, otherTextY + yOffset);
+      ctx.fillText('DiRT Rally: ' + games.dr, 5, otherTextY + 25);
       ctx.globalAlpha = 1;
 
       if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally 2: ' + games.dr2, 345, otherTextY + yOffset);
+      ctx.fillText('DiRT Rally 2: ' + games.dr2, 150, otherTextY + 25);
       ctx.globalAlpha = 1;
 
-      ctx.fillText('F1: ' + games.f1, 495, otherTextY + yOffset);
     },
 
     render: function (images) {

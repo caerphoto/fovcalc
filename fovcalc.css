@@ -110,7 +110,7 @@ input[type="number"] + label {
 #fov-preview {
   display: block;
   max-width: 600px;
-  max-height: 470px;
+  max-height: 490px;
   border: none;
   margin: 0 auto;
   cursor: crosshair;
