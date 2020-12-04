@@ -13,7 +13,7 @@
   var CANVAS_WIDTH = 600;
   var CANVAS_HEIGHT = 490;
 
-  var $form = D.querySelector('form');
+  var $form = D.querySelector('#controls');
   var sliders = {};
 
   var carImages = {

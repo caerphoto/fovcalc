@@ -35,7 +35,7 @@
 
       <p class="caption">Top view: horizontal FoV; side view: vertical FoV. Thick red bar represents monitor.</p>
 
-      <form action="#">
+      <form action="#" id="controls">
 
         <fieldset>
           <legend>Distance to screen</legend>
@@ -64,6 +64,23 @@
 
         </fieldset>
       </form>
+
+      <p class="feedback-popper"><button type="button" id="leave-feedback">Leave feedback</button></p>
+
+      <div class="popup-background">
+        <form id="feedback">
+          <h2>Feedback</h2>
+          <label for="feedback-name">Name (optional):</label>
+          <input type="text" name="feedback-name">
+          <label for="feedback-text">Your feedback:</label>
+          <textarea name="feedback-text"></textarea>
+          <p>(max 1000 characters, <span id="feedback-remaining">1000</span> remaining)</p>
+          <div class="form-buttons">
+            <button id="feedback-cancel" type="button">Cancel</button>
+            <button id="feedback-send" type="submit">Send</button>
+          </div>
+        </form>
+      </div>
 
       <p id="debug"></p>
 
