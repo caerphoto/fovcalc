@@ -242,6 +242,10 @@ input[type="number"] + label {
   margin: 0 0 1em;
 }
 
+.too-long {
+  color: #800;
+}
+
 button {
   -webkit-appearance: none;
   appearance: none;
@@ -272,6 +276,11 @@ button[type="submit"]:hover {
 
 button:active {
   box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .form-buttons {

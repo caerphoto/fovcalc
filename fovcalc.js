@@ -24,6 +24,13 @@
   var feedback = {
     el: $('#feedback'),
     form: null,
+    inputs: {
+      name: null,
+      text: null,
+    },
+    MAX_NAME: 200,
+    MAX_TEXT: 1000,
+    textLengthDisplay: null,
     buttons: {
       open: $('#leave-feedback'),
       cancel: $('#feedback-cancel'),
@@ -31,42 +38,58 @@
     },
     init: function () {
       this.form = this.el.querySelector('form');
+      this.inputs.name = this.form.elements['feedback-name'];
+      this.inputs.text = this.form.elements['feedback-text'];
+      this.textLengthDisplay = $('#feedback-remaining');
+
+      this.inputs.text.addEventListener('input', this.textChange.bind(this));
       this.buttons.open.addEventListener('click', this.toggleForm.bind(this));
       this.buttons.cancel.addEventListener('click', this.cancelForm.bind(this));
       this.buttons.send.addEventListener('click', this.sendFeedback.bind(this));
     },
+    getSafeName: function () {
+      return this.inputs.name.value.slice(0, this.MAX_NAME);
+    },
+    getSafeText: function () {
+      return this.inputs.text.value.slice(0, this.MAX_TEXT);
+    },
     calcChecksum: function () {
-      return hex_md5(
-        this.form.elements['feedback-name'].value +
-        this.form.elements['feedback-text'].value
-      );
+      return hex_md5(this.getSafeName() + this.getSafeText());
+    },
+    textChange: function () {
+      var len = this.inputs.text.value.length;
+      var isTooLong = len > this.MAX_TEXT;
+      this.textLengthDisplay.textContent = this.MAX_TEXT - len;
+      this.textLengthDisplay.classList.toggle('too-long', isTooLong);
+      this.buttons.send.disabled = isTooLong;
     },
     toggleForm: function () {
       this.el.classList.toggle('visible');
       if (this.el.classList.contains('visible')) {
         setTimeout(() => {
-          this.form.elements['feedback-name'].focus();
+          this.inputs.name.focus();
+          this.textChange();
         }, 0);
       }
     },
     clearInputs: function () {
-      this.form.elements['feedback-name'].value = '';
-      this.form.elements['feedback-text'].value = '';
+      this.inputs.name.value = '';
+      this.inputs.text.value = '';
     },
     cancelForm: function () {
       this.toggleForm();
-      this.clearInputs();
     },
     sendFeedback: function (event) {
-      var formData;
+      var formData = new FormData();
       var xhr = new XMLHttpRequest();
-      var checksum = this.calcChecksum();
 
       this.toggleForm();
       event.preventDefault();
 
-      formData = new FormData(this.form);
-      formData.set('feedback-checksum', checksum);
+      formData.set('feedback-name', this.getSafeName());
+      formData.set('feedback-text', this.getSafeText());
+      formData.set('feedback-checksum', this.calcChecksum());
+
       xhr.open('POST', this.form.action);
       xhr.send(formData);
     }
