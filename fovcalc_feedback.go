@@ -5,6 +5,7 @@ import (
   "net/http"
   "fmt"
   "io"
+  "os"
   "encoding/hex"
   "crypto/md5"
 )
@@ -16,9 +17,10 @@ type Feedback struct {
 }
 
 func main() {
+  listen := "127.0.0.1:9933"
   http.HandleFunc("/fovcalc_feedback", Handler)
-  log.Println("Listening on :9933 ...")
-  log.Fatal(http.ListenAndServe(":9933", nil))
+  log.Printf("Listening on %s; PID = %d", listen, os.Getpid())
+  log.Fatal(http.ListenAndServe(listen, nil))
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {

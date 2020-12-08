@@ -10,8 +10,10 @@ echo Minifying these files: "${INPUT_JS[@]}"
 
 rm build/*
 
-uglifyjs -b --warn "${INPUT_JS[@]}" > build/$JS_FILENAME &&
-  echo $JS_FILENAME generated
+#uglifyjs -b --warn "${INPUT_JS[@]}" > build/$JS_FILENAME &&
+  #echo $JS_FILENAME generated
+cp fovcalc.js build/$JS_FILENAME &&
+  echo $JS_FILENAME created
 
 cp fovcalc.css build/$CSS_FILENAME &&
   echo $CSS_FILENAME created
