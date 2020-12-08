@@ -67,9 +67,9 @@
 
       <p class="feedback-popper"><button type="button" id="leave-feedback">Leave feedback</button></p>
 
-      <div class="popup-background">
-        <form id="feedback">
-          <h2>Feedback</h2>
+      <div class="popup-background" id="feedback">
+        <form action="http://localhost:9933/fovcalc_feedback">
+          <h2>Leave Feedback</h2>
           <label for="feedback-name">Name (optional):</label>
           <input type="text" name="feedback-name">
           <label for="feedback-text">Your feedback:</label>
@@ -86,6 +86,7 @@
 
       <p>Made by <a href="/">Andy F</a>, aka <a href="https://www.reddit.com/user/caerphoto">/u/caerphoto</a> on Reddit.</p>
     </div>
+    <script src="md5.js"></script>
     <script src="fovcalc.js"></script>
   </body>
 </html>

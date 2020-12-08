@@ -1,5 +1,10 @@
+/*global hex_md5 */
 (function (D) {
   'use strict';
+
+  function $(sel, el) {
+    return (el || D).querySelector(sel);
+  }
 
   var MONITOR_COLOR = '#f00';
   var MONITOR_THICKNESS = 6;
@@ -13,8 +18,59 @@
   var CANVAS_WIDTH = 600;
   var CANVAS_HEIGHT = 490;
 
-  var $form = D.querySelector('#controls');
+  var $form = $('#controls');
   var sliders = {};
+
+  var feedback = {
+    el: $('#feedback'),
+    form: null,
+    buttons: {
+      open: $('#leave-feedback'),
+      cancel: $('#feedback-cancel'),
+      send: $('#feedback-send')
+    },
+    init: function () {
+      this.form = this.el.querySelector('form');
+      this.buttons.open.addEventListener('click', this.toggleForm.bind(this));
+      this.buttons.cancel.addEventListener('click', this.cancelForm.bind(this));
+      this.buttons.send.addEventListener('click', this.sendFeedback.bind(this));
+    },
+    calcChecksum: function () {
+      return hex_md5(
+        this.form.elements['feedback-name'].value +
+        this.form.elements['feedback-text'].value
+      );
+    },
+    toggleForm: function () {
+      this.el.classList.toggle('visible');
+      if (this.el.classList.contains('visible')) {
+        setTimeout(() => {
+          this.form.elements['feedback-name'].focus();
+        }, 0);
+      }
+    },
+    clearInputs: function () {
+      this.form.elements['feedback-name'].value = '';
+      this.form.elements['feedback-text'].value = '';
+    },
+    cancelForm: function () {
+      this.toggleForm();
+      this.clearInputs();
+    },
+    sendFeedback: function (event) {
+      var formData;
+      var xhr = new XMLHttpRequest();
+      var checksum = this.calcChecksum();
+
+      this.toggleForm();
+      event.preventDefault();
+
+      formData = new FormData(this.form);
+      formData.set('feedback-checksum', checksum);
+      xhr.open('POST', this.form.action);
+      xhr.send(formData);
+    }
+  };
 
   var carImages = {
     top: new Image(),
@@ -531,5 +587,8 @@
         }
       });
     });
+
+    // Feedback stuff
+    feedback.init();
   });
 }(window.document));
