@@ -45,8 +45,13 @@ func extractFormData(r *http.Request) Feedback {
 }
 
 func isValidMd5(feedback Feedback) bool {
-  data := feedback.Name + feedback.Text
-  return hexedHash(data) == feedback.Md5
+  data := feedback.Text
+  hex := hexedHash(data)
+  if hex != feedback.Md5 {
+    log.Printf("Hash mismatch. Data to hash:\n<<%s>> (length: %d)\n", data, len(data))
+    log.Printf("Hashes:\nSent: %s\nCalc: %s\n", feedback.Md5, hex)
+  }
+  return hex == feedback.Md5
 }
 
 func hexedHash(s string) string {

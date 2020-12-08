@@ -1,4 +1,3 @@
-/*global hex_md5 */
 (function (D) {
   'use strict';
 
@@ -50,11 +49,19 @@
     getSafeName: function () {
       return this.inputs.name.value.slice(0, this.MAX_NAME);
     },
+    normalisedNewlines: function (s) {
+      // HTTP requests are sent using \r\n but textareas are (supposed to be)
+      // encoded with just \n so we need to normalise the behaviour or the MD5
+      // hashes won't match.
+      return s.replace(/\r?\n/g, '\r\n');
+    },
     getSafeText: function () {
-      return this.inputs.text.value.slice(0, this.MAX_TEXT);
+      var text = this.inputs.text.value.slice(0, this.MAX_TEXT);
+      return this.normalisedNewlines(text);
     },
     calcChecksum: function () {
-      return hex_md5(this.getSafeName() + this.getSafeText());
+      //return hex_md5(this.getSafeName() + this.getSafeText());
+      return window.md5(this.getSafeText());
     },
     textChange: function () {
       var len = this.inputs.text.value.length;
