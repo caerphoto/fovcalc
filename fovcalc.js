@@ -64,11 +64,11 @@
       return window.md5(this.getSafeText());
     },
     textChange: function () {
-      var len = this.inputs.text.value.length;
-      var isTooLong = len > this.MAX_TEXT;
+      var len = this.normalisedNewlines(this.inputs.text.value).length;
+      var invalidLength = len > this.MAX_TEXT || len == 0;
       this.textLengthDisplay.textContent = this.MAX_TEXT - len;
-      this.textLengthDisplay.classList.toggle('too-long', isTooLong);
-      this.buttons.send.disabled = isTooLong;
+      this.textLengthDisplay.classList.toggle('too-long', invalidLength);
+      this.buttons.send.disabled = invalidLength;
     },
     toggleForm: function () {
       this.el.classList.toggle('visible');
@@ -97,7 +97,10 @@
       formData.set('feedback-text', this.getSafeText());
       formData.set('feedback-checksum', this.calcChecksum());
 
-      xhr.open('POST', this.form.action);
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200) window.alert('Thanks for your feedback!');
+      });
+      xhr.open('POST', this.form.action.replace('.404', ''));
       xhr.send(formData);
     }
   };

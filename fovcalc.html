@@ -68,13 +68,14 @@
       <p class="feedback-popper"><button type="button" id="leave-feedback">Leave feedback</button></p>
 
       <div class="popup-background" id="feedback">
-        <form action="http://localhost:9933/fovcalc_feedback">
+        <form action="http://localhost:9933/fovcalc_feedback.404">
           <h2>Leave Feedback</h2>
           <label for="feedback-name">Name (optional):</label>
           <input type="text" name="feedback-name">
           <label for="feedback-text">Your feedback:</label>
           <textarea name="feedback-text"></textarea>
           <p>(max 1000 characters, <span id="feedback-remaining">1000</span> remaining)</p>
+          <input type="hidden" name="feedback-checksum" value="I'm a spammer :(">
           <div class="form-buttons">
             <button id="feedback-cancel" type="button">Cancel</button>
             <button id="feedback-send" type="submit">Send</button>
