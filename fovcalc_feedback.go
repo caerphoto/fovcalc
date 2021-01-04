@@ -27,7 +27,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
   feedback := extractFormData(r)
 
   if isValidMd5(feedback) {
-    log.Printf("Received feedback:\nName:\n  %s\nText:\n  %s\n", feedback.Name, feedback.Text)
+    log.Printf("Received feedback from \033[0;33m%s\033[0m:\n<\033[0;36m%s\033[0m>\n", feedback.Name, feedback.Text)
     fmt.Fprintf(w, "OK")
     return
   } else {
@@ -48,8 +48,7 @@ func isValidMd5(feedback Feedback) bool {
   data := feedback.Text
   hex := hexedHash(data)
   if hex != feedback.Md5 {
-    log.Printf("Hash mismatch. Data to hash:\n<<%s>> (length: %d)\n", data, len(data))
-    log.Printf("Hashes:\nSent: %s\nCalc: %s\n", feedback.Md5, hex)
+    log.Printf("Hash mismatch. Sent: %s, calc: %s\n", feedback.Md5, hex)
   }
   return hex == feedback.Md5
 }
