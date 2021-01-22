@@ -371,7 +371,7 @@
       ctx.globalAlpha = 1;
 
       if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally 2: ' + games.dr2, 150, otherTextY + 25);
+      ctx.fillText('DiRT Rally 2: ' + games.dr2 + ' (from centre of slider)', 150, otherTextY + 25);
       ctx.globalAlpha = 1;
 
     },
