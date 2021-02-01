@@ -1,3 +1,4 @@
+/*eslint indent: ["warn", 2] */
 (function (D) {
   'use strict';
 
@@ -540,6 +541,15 @@
     }
   };
 
+  function getAncestorLabelOf(input) {
+    var label = input;
+    while (label.nodeName !== 'LABEL') {
+      label = label.parentNode;
+    }
+
+    return label;
+  }
+
   function formChange(event) {
     var el = (event && event.target) || { name: null };
     var relatedInputs = {
@@ -549,6 +559,7 @@
       'size-s': 'size-n'
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
+    var label;
 
     if (el.name && el.name !== 'aspect-ratio') {
       if (/-s$/.test(el.name)) {
@@ -559,10 +570,15 @@
     }
 
     ['distance', 'size'].forEach(function (key) {
+      var input = $form.elements[key + '-inches'];
+      var label = getAncestorLabelOf(input);
+
       diagram.measurements[key] = {
         value: parseInt($form.elements[key + '-n'].value, 10),
-        isInches: $form.elements[key + '-inches'].checked
+        isInches: input.checked
       };
+
+      label.classList.toggle('inches', input.checked);
     });
 
     diagram.monitor.distance = diagram.pixelsFromUnits(
