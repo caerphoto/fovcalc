@@ -34,7 +34,7 @@
     buttons: {
       open: $('#leave-feedback'),
       cancel: $('#feedback-cancel'),
-      send: $('#feedback-send')
+      send: $('#feedback-send'),
     },
     init: function () {
       this.form = this.el.querySelector('form');
@@ -103,7 +103,7 @@
       });
       xhr.open('POST', this.form.action.replace('.404', ''));
       xhr.send(formData);
-    }
+    },
   };
 
   var carImages = {
@@ -128,7 +128,7 @@
       if (this.numLoaded === 2) {
         this.onReady.call(this);
       }
-    }
+    },
   };
 
   var diagram = {
@@ -142,14 +142,14 @@
       normSY: 0.17,
       x: 0,
       ty: 0,
-      sy: 0
+      sy: 0,
     },
     xOffset: 0,
     textHeight: 1,
 
     measurements: {
       distance: { value: 0, isInches: false },
-      size: { value: 0, isInches: false }
+      size: { value: 0, isInches: false },
     },
 
     monitor: {
@@ -161,7 +161,7 @@
         var rh = this.ratio[1];
         var d = this.diagonalSize;
 
-        var h = (d * rh) / Math.sqrt(rw* rw + rh * rh);
+        var h = (d * rh) / Math.sqrt(rw * rw + rh * rh);
         var w = (rw / rh) * h;
 
         return { w: w, h: h };
@@ -180,7 +180,10 @@
       this.context.font = '1em ' + window.getComputedStyle(D.body).fontFamily;
 
       // fontSize will be in pixels
-      this.textHeight = parseFloat(window.getComputedStyle(D.body).fontSize, 10);
+      this.textHeight = parseFloat(
+        window.getComputedStyle(D.body).fontSize,
+        10,
+      );
     },
     pixelsFromUnits: function (u, useInches) {
       var pixels = u * carImages.scale;
@@ -196,14 +199,27 @@
     },
 
     degreesFromRadians: function (radians) {
-      return ((radians * 180) / Math.PI);
+      return (radians * 180) / Math.PI;
     },
 
     getFieldsOfView: function () {
       var monSides = this.monitor.getSides();
+
+      var tripleAngle = this.monitor.tripleAngle;
+      var tripleDis =
+        this.monitor.distance -
+        Math.sin((tripleAngle * Math.PI) / 180) * monSides.w;
+      var tripleWidth =
+        monSides.w + 2 * Math.cos((tripleAngle * Math.PI) / 180) * monSides.w;
+
+      var tripleHorizontalFov = Math.atan(tripleWidth / 2 / tripleDis) * 2;
+      if (tripleHorizontalFov < 0) {
+        tripleHorizontalFov = 2 * Math.PI + tripleHorizontalFov;
+      }
       return {
-        h: Math.atan((monSides.w / 2) / this.monitor.distance) * 2,
-        v: Math.atan((monSides.h / 2) / this.monitor.distance) * 2,
+        h: Math.atan(monSides.w / 2 / this.monitor.distance) * 2,
+        v: Math.atan(monSides.h / 2 / this.monitor.distance) * 2,
+        th: tripleHorizontalFov,
       };
     },
 
@@ -228,26 +244,25 @@
 
         // Updated scaling formula by Reddit user GalaxyMaster_P:
         // https://www.reddit.com/r/dirtgame/comments/bgg61d/i_created_an_fov_editing_tool_for_dirt_rally_20/
-        normalizedPos = -Math.sqrt((degrees-75) / -20) + 1.5;
+        normalizedPos = -Math.sqrt((degrees - 75) / -20) + 1.5;
         scaledPos = Math.round(normalizedPos * 10) - 5;
 
         // Currently don't do anything with normalizedOutput, as it's not a
         // super useful value outside of some dubiously legal Cheat Engine use.
         // normalizedOutput = ' (' + normalizedPos.toFixed(3) + ')';
 
-
         if (scaledPos === 0) return ' 0';
-        if (scaledPos < 0) return '\u2212' + (-scaledPos);
+        if (scaledPos < 0) return '\u2212' + -scaledPos;
         return '+' + scaledPos;
       },
       f1: function (degrees) {
         function format(num) {
           return num.toString().replace('-', '\u2212');
         }
-        var scale = Math.round(((degrees - 77) / 2)) / 20;
+        var scale = Math.round((degrees - 77) / 2) / 20;
         return {
           old: format(scale),
-          new: format(scale * 2)
+          new: format(scale * 2),
         };
       },
     },
@@ -255,8 +270,10 @@
     setHeadPositions: function (carImages) {
       this.headPositions.x = carImages.top.width * this.headPositions.normX;
       this.headPositions.ty = carImages.top.height * this.headPositions.normTY;
-      this.headPositions.sy = carImages.side.height * this.headPositions.normSY +
-        carImages.top.height + 10;
+      this.headPositions.sy =
+        carImages.side.height * this.headPositions.normSY +
+        carImages.top.height +
+        10;
     },
 
     drawCarImages: function (images) {
@@ -281,6 +298,10 @@
       var monSides = this.monitor.getSides();
       var monTY = headTY - monSides.w / 2;
       var monSY = headSY - monSides.h / 2;
+      var tripleAngle = diagram.monitor.tripleAngle;
+
+      var monLeftY = headTY + monSides.w / 2;
+      var monRightY = headTY - monSides.w / 2;
 
       ctx.beginPath();
       ctx.arc(headX, headTY, HEAD_SIZE, 0, pi2);
@@ -289,9 +310,45 @@
       ctx.arc(headX, headSY, HEAD_SIZE, 0, pi2);
       ctx.fill();
 
+      // top view center monitor
+      ctx.lineWidth = MONITOR_THICKNESS;
+      ctx.moveTo(monX, monTY);
+      ctx.lineTo(monX, monTY + monSides.w);
+      ctx.stroke();
+      ctx.lineWidth = 1;
 
-      ctx.fillRect(monX, monTY, MONITOR_THICKNESS, monSides.w);
-      ctx.fillRect(monX, monSY, MONITOR_THICKNESS, monSides.h);
+      // side view center monitor
+      ctx.lineWidth = MONITOR_THICKNESS;
+      ctx.moveTo(monX, monSY);
+      ctx.lineTo(monX, monSY + monSides.h);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+
+      if (diagram.monitor.count === 3) {
+        // top view left monitor
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.translate(monX, monLeftY);
+        ctx.rotate((-tripleAngle * Math.PI) / 180);
+        ctx.translate(-monX, -monLeftY);
+        ctx.lineWidth = MONITOR_THICKNESS;
+        ctx.moveTo(monX, monLeftY);
+        ctx.lineTo(monX, monLeftY + monSides.w);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        // top view right monitor
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.translate(monX, monRightY);
+        ctx.rotate(((tripleAngle + 180) * Math.PI) / 180);
+        ctx.translate(-monX, -monRightY);
+        ctx.lineWidth = MONITOR_THICKNESS;
+        ctx.moveTo(monX, monRightY);
+        ctx.lineTo(monX, monRightY + monSides.w);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
     },
 
     drawViewLines: function () {
@@ -304,15 +361,29 @@
       var headTY = this.headPositions.ty;
       var headSY = this.headPositions.sy;
 
+      var fovAngle = this.getFieldsOfView();
+      var fovTripleTH = fovW * Math.tan(fovAngle.th / 2);
+      var fovTripleW = fovW;
+      if (fovAngle.th > Math.PI) {
+        fovTripleW = -fovTripleW;
+      }
+
       // Top view
       ctx.beginPath();
       ctx.moveTo(headX, headTY);
       ctx.lineTo(headX - fovW, headTY - fovTH);
       ctx.moveTo(headX, headTY);
       ctx.lineTo(headX - fovW, headTY + fovTH);
+
+      if (diagram.monitor.count === 3) {
+        ctx.moveTo(headX, headTY);
+        ctx.lineTo(headX - fovTripleW, headTY + fovTripleTH);
+        ctx.moveTo(headX, headTY);
+        ctx.lineTo(headX - fovTripleW, headTY - fovTripleTH);
+      }
       ctx.stroke();
 
-      // Top view
+      // Side view
       ctx.beginPath();
       ctx.moveTo(headX, headSY);
       ctx.lineTo(headX - fovW, headSY - fovSH);
@@ -324,7 +395,7 @@
     drawAngleText: function () {
       var ctx = this.context;
       var fovs = this.getFieldsOfView();
-      var hFov, vFov;
+      var hFov, vFov, thFov;
       var yOffset = this.textHeight / 3;
       var fovX = this.headPositions.x + HEAD_SIZE * 2 + 5;
       var headTY = this.headPositions.ty;
@@ -336,7 +407,7 @@
         rbr: 0,
         dr: 0,
         dr2: 0,
-        f1: 0
+        f1: 0,
       };
 
       // RBR FoV is measured in radians, so just use existing value
@@ -344,6 +415,7 @@
 
       fovs.h = this.degreesFromRadians(fovs.h);
       fovs.v = this.degreesFromRadians(fovs.v);
+      fovs.th = this.degreesFromRadians(fovs.th);
 
       games.r3e = this.gameSpecific.r3e(fovs.v);
       games.dr = this.gameSpecific.dr(fovs.v);
@@ -359,6 +431,10 @@
       ctx.fillText(hFov + '\u00b0', fovX, headTY + yOffset);
       ctx.fillText(vFov + '\u00b0', fovX, headSY + yOffset);
 
+      if (diagram.monitor.count === 3) {
+        thFov = fovs.th.toPrecision(precision).replace('.', '\u200a.\u200a');
+        ctx.fillText(thFov + '\u00b0', fovX, headTY + yOffset + 20);
+      }
 
       // Other games
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY);
@@ -372,9 +448,12 @@
       ctx.globalAlpha = 1;
 
       if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally 2: ' + games.dr2 + ' (from centre of slider)', 150, otherTextY + 25);
+      ctx.fillText(
+        'DiRT Rally 2: ' + games.dr2 + ' (from centre of slider)',
+        150,
+        otherTextY + 25,
+      );
       ctx.globalAlpha = 1;
-
     },
 
     render: function (images) {
@@ -384,7 +463,7 @@
       this.drawViewLines();
       this.drawHeadsAndMonitors();
       this.drawAngleText();
-    }
+    },
   };
 
   function has(obj, prop) {
@@ -398,14 +477,18 @@
     });
 
     if (!hasAllProperties) {
-      throw new Error('Missing required options. Supplied: ' +
-        Object.keys(options).join(', '));
+      throw new Error(
+        'Missing required options. Supplied: ' +
+          Object.keys(options).join(', '),
+      );
     }
 
     this.properties = {};
-    requiredProperties.forEach(function (prop) {
-      this.properties[prop] = options[prop];
-    }.bind(this));
+    requiredProperties.forEach(
+      function (prop) {
+        this.properties[prop] = options[prop];
+      }.bind(this),
+    );
 
     if (has(options, 'value')) {
       this.properties.value = options.value;
@@ -438,9 +521,12 @@
 
     this.eventHandlers = {};
 
-    setTimeout(function () {
-      this.updateSliderPosition();
-    }.bind(this), 0);
+    setTimeout(
+      function () {
+        this.updateSliderPosition();
+      }.bind(this),
+      0,
+    );
   };
 
   Slider.prototype = {
@@ -459,9 +545,11 @@
     },
 
     onMouseDown: function (event) {
-      var isOnSlider = Object.keys(this.els).some(function (key) {
-        return event.target === this.els[key];
-      }.bind(this));
+      var isOnSlider = Object.keys(this.els).some(
+        function (key) {
+          return event.target === this.els[key];
+        }.bind(this),
+      );
 
       if (!isOnSlider) return this;
 
@@ -475,12 +563,13 @@
       event.preventDefault();
 
       var rect = this.els.thumbContainer.getBoundingClientRect();
-      var x = (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
+      var x =
+        (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
       if (x < 0) x = 0;
       if (x >= rect.width) x = rect.width;
 
       var step = this.properties.step;
-      var normalizedValue = (x / rect.width);
+      var normalizedValue = x / rect.width;
       var min = this.properties.min;
       var max = this.properties.max;
 
@@ -522,9 +611,11 @@
         return;
       }
 
-      this.eventHandlers[eventName].forEach(function (handler) {
-        handler.call(this, newValue);
-      }.bind(this));
+      this.eventHandlers[eventName].forEach(
+        function (handler) {
+          handler.call(this, newValue);
+        }.bind(this),
+      );
 
       return this;
     },
@@ -538,7 +629,7 @@
 
     getValue: function () {
       return this.properties.value;
-    }
+    },
   };
 
   function getAncestorLabelOf(input) {
@@ -556,9 +647,12 @@
       'distance-n': 'distance',
       'distance-s': 'distance-n',
       'size-n': 'size',
-      'size-s': 'size-n'
+      'size-s': 'size-n',
+      'triple-angle-n': 'triple-angle',
+      'triple-angle-s': 'triple-angle-n',
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
+    var monitorCount = Number($form.elements['monitor-count'].value);
     var label;
 
     if (el.name && el.name !== 'aspect-ratio') {
@@ -575,21 +669,32 @@
 
       diagram.measurements[key] = {
         value: parseInt($form.elements[key + '-n'].value, 10),
-        isInches: input.checked
+        isInches: input.checked,
       };
 
       label.classList.toggle('inches', input.checked);
     });
 
+    ['triple-angle'].forEach(function (key) {
+      diagram.measurements[key] = {
+        value: parseInt($form.elements[key + '-n'].value, 10),
+      };
+    });
+
     diagram.monitor.distance = diagram.pixelsFromUnits(
       diagram.measurements.distance.value,
-      diagram.measurements.distance.isInches);
+      diagram.measurements.distance.isInches,
+    );
 
     diagram.monitor.diagonalSize = diagram.pixelsFromUnits(
       diagram.measurements.size.value,
-      diagram.measurements.size.isInches);
+      diagram.measurements.size.isInches,
+    );
 
     diagram.monitor.ratio = ratio;
+
+    diagram.monitor.count = monitorCount;
+    diagram.monitor.tripleAngle = diagram.measurements['triple-angle'].value;
 
     diagram.render(carImages);
     diagram.alreadyUpdated = true;
@@ -609,7 +714,7 @@
       max: 120,
       step: 1,
       value: 40,
-      el: document.querySelector('#slider-distance')
+      el: document.querySelector('#slider-distance'),
     });
 
     sliders.size = new Slider({
@@ -617,27 +722,43 @@
       max: 100,
       step: 0.5,
       value: 24,
-      el: document.querySelector('#slider-size')
+      el: document.querySelector('#slider-size'),
+    });
+
+    sliders.tripleAngle = new Slider({
+      min: 0,
+      max: 90,
+      step: 1,
+      value: 65,
+      el: document.querySelector('#slider-triple-angle'),
     });
 
     sliders.distance.on('change', function () {
       formChange({
         target: {
           name: 'distance-s',
-          value: this.getValue()
-        }
+          value: this.getValue(),
+        },
       });
     });
     sliders.size.on('change', function () {
       formChange({
         target: {
           name: 'size-s',
-          value: this.getValue()
-        }
+          value: this.getValue(),
+        },
+      });
+    });
+    sliders.tripleAngle.on('change', function () {
+      formChange({
+        target: {
+          name: 'triple-angle-s',
+          value: this.getValue(),
+        },
       });
     });
 
     // Feedback stuff
     feedback.init();
   });
-}(window.document));
+})(window.document);

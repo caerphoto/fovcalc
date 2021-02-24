@@ -1,58 +1,106 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Field of view calculator &middot; andyf.me</title>
-    <link rel="stylesheet" href="fovcalc.css">
-    <link rel="shortcut icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="fovcalc.css" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
 
-    <meta name="description" content="The easiest way to calculate the mathematically accurate field of view (FoV) for your racing sim, no Flash required.">
-    <meta name="keywords" content="sim racing,simracing,racing simulator,fov,calculator,field of view,hfov,vfov,assetto corsa,project cars,rfactor,dirt rally">
-    <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=1, user-scalable=no, maximum-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta
+      name="description"
+      content="The easiest way to calculate the mathematically accurate field of view (FoV) for your racing sim, no Flash required."
+    />
+    <meta
+      name="keywords"
+      content="sim racing,simracing,racing simulator,fov,calculator,field of view,hfov,vfov,assetto corsa,project cars,rfactor,dirt rally"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, minimum-scale=1, user-scalable=no, maximum-scale=1"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </head>
 
   <body>
     <div class="main">
       <h1>Field of view calculator</h1>
-      <p>A super simple way to calculate the mathematically accurate field of view (FoV) for your racing simulator, based on <em>monitor size</em> and <em>viewing distance</em>.</p>
-      <p>Why do this? Watch <a
-        href="https://www.youtube.com/watch?v=AbbxkX7kS_M">this video by Empty
-        Box</a> for an explanation. Basically it's so things in the game look the
-        same size as they would in real life, allowing you to judge distances
-        better.
+      <p>
+        A super simple way to calculate the mathematically accurate field of
+        view (FoV) for your racing simulator, based on <em>monitor size</em> and
+        <em>viewing distance</em>.
+      </p>
+      <p>
+        Why do this? Watch
+        <a href="https://www.youtube.com/watch?v=AbbxkX7kS_M"
+          >this video by Empty Box</a
+        >
+        for an explanation. Basically it's so things in the game look the same
+        size as they would in real life, allowing you to judge distances better.
       </p>
       <noscript>
         <style>
-          .error { color: #d88; background-color: #622; padding: 1em; text-align: center; }
-          canvas, .caption, form, .disclaimer { display: none; }
+          .error {
+            color: #d88;
+            background-color: #622;
+            padding: 1em;
+            text-align: center;
+          }
+          canvas,
+          .caption,
+          form,
+          .disclaimer {
+            display: none;
+          }
         </style>
-        <p class="error">This calculator only works when JavaScript is enabled.</p>
+        <p class="error">
+          This calculator only works when JavaScript is enabled.
+        </p>
       </noscript>
 
       <canvas id="fov-preview"></canvas>
 
-      <p class="caption">Top view: horizontal FoV; side view: vertical FoV. Thick red bar represents monitor.</p>
+      <p class="caption">
+        Top view: horizontal FoV; side view: vertical FoV. Thick red bar
+        represents monitor.
+      </p>
 
       <form action="#" id="controls">
-
         <fieldset>
           <legend>Distance to screen</legend>
           <div id="slider-distance"></div>
-          <input type="number" name="distance-n" min="10" max="200" value="40">
-          <label title="Switch between inches and centimetres" class="unit-switch inch"><span class="unit-switch_slider"><span class="unit-switch_slider--thumb"></span></span><input type="checkbox" name="distance-inches" checked></label>
+          <input
+            type="number"
+            name="distance-n"
+            min="10"
+            max="200"
+            value="40"
+          />
+          <label
+            title="Switch between inches and centimetres"
+            class="unit-switch inch"
+            ><span class="unit-switch_slider"
+              ><span class="unit-switch_slider--thumb"></span></span
+            ><input type="checkbox" name="distance-inches" checked
+          /></label>
         </fieldset>
 
         <fieldset>
           <legend>Screen size and shape</legend>
           <div id="slider-size"></div>
-          <input type="number" name="size-n" min="10" max="200" value="24">
-          <label title="Switch between inches and centimetres" class="unit-switch inch"><span class="unit-switch_slider"><span class="unit-switch_slider--thumb"></span></span><input type="checkbox" name="size-inches" checked></label>
+          <input type="number" name="size-n" min="10" max="200" value="24" />
+          <label
+            title="Switch between inches and centimetres"
+            class="unit-switch inch"
+            ><span class="unit-switch_slider"
+              ><span class="unit-switch_slider--thumb"></span></span
+            ><input type="checkbox" name="size-inches" checked
+          /></label>
 
           <p class="note">Note: screen size is measured diagonally.</p>
 
-          <label>Aspect ratio
+          <label
+            >Aspect ratio
             <select name="aspect-ratio">
               <option value="16:9" selected>16:9</option>
               <option value="16:10">16:10</option>
@@ -61,21 +109,51 @@
               <option value="32:9">32:9</option>
             </select>
           </label>
+        </fieldset>
 
+        <fieldset>
+          <label
+            >Monitor Count
+            <select name="monitor-count">
+              <option value="1">Single Screen</option>
+              <option value="3" selected="">Triple Screen</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Triple Monitor Angle (if triple monitor enabled)</legend>
+          <div id="slider-triple-angle"></div>
+          <input
+            type="number"
+            name="triple-angle-n"
+            min="0"
+            max="90"
+            value="65"
+          />
         </fieldset>
       </form>
 
-      <p class="feedback-popper"><button type="button" id="leave-feedback">Leave feedback</button></p>
+      <p class="feedback-popper">
+        <button type="button" id="leave-feedback">Leave feedback</button>
+      </p>
 
       <div class="popup-background" id="feedback">
         <form action="http://localhost:9933/fovcalc_feedback.404">
           <h2>Leave Feedback</h2>
           <label for="feedback-name">Name (optional):</label>
-          <input type="text" name="feedback-name">
+          <input type="text" name="feedback-name" />
           <label for="feedback-text">Your feedback:</label>
           <textarea name="feedback-text"></textarea>
-          <p>(max 1000 characters, <span id="feedback-remaining">1000</span> remaining)</p>
-          <input type="hidden" name="feedback-checksum" value="I'm a spammer :(">
+          <p>
+            (max 1000 characters,
+            <span id="feedback-remaining">1000</span> remaining)
+          </p>
+          <input
+            type="hidden"
+            name="feedback-checksum"
+            value="I'm a spammer :("
+          />
           <div class="form-buttons">
             <button id="feedback-cancel" type="button">Cancel</button>
             <button id="feedback-send" type="submit">Send</button>
@@ -85,7 +163,11 @@
 
       <p id="debug"></p>
 
-      <p>Made by <a href="/">Andy F</a>, aka <a href="https://www.reddit.com/user/caerphoto">/u/caerphoto</a> on Reddit.</p>
+      <p>
+        Made by <a href="/">Andy F</a>, aka
+        <a href="https://www.reddit.com/user/caerphoto">/u/caerphoto</a> on
+        Reddit.
+      </p>
     </div>
     <script src="md5unicode.js"></script>
     <script src="fovcalc.js"></script>
