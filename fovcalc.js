@@ -204,9 +204,22 @@
 
     getFieldsOfView: function () {
       var monSides = this.monitor.getSides();
+
+      var tripleAngle = this.monitor.tripleAngle;
+      var tripleDis =
+        this.monitor.distance -
+        Math.sin((tripleAngle * Math.PI) / 180) * monSides.w;
+      var tripleWidth =
+        monSides.w + 2 * Math.cos((tripleAngle * Math.PI) / 180) * monSides.w;
+
+      var tripleHorizontalFov = Math.atan(tripleWidth / 2 / tripleDis) * 2;
+      if (tripleHorizontalFov < 0) {
+        tripleHorizontalFov = 2 * Math.PI + tripleHorizontalFov;
+      }
       return {
         h: Math.atan(monSides.w / 2 / this.monitor.distance) * 2,
         v: Math.atan(monSides.h / 2 / this.monitor.distance) * 2,
+        th: tripleHorizontalFov,
       };
     },
 
@@ -285,6 +298,10 @@
       var monSides = this.monitor.getSides();
       var monTY = headTY - monSides.w / 2;
       var monSY = headSY - monSides.h / 2;
+      var tripleAngle = diagram.monitor.tripleAngle;
+
+      var monLeftY = headTY + monSides.w / 2;
+      var monRightY = headTY - monSides.w / 2;
 
       ctx.beginPath();
       ctx.arc(headX, headTY, HEAD_SIZE, 0, pi2);
@@ -293,8 +310,45 @@
       ctx.arc(headX, headSY, HEAD_SIZE, 0, pi2);
       ctx.fill();
 
-      ctx.fillRect(monX, monTY, MONITOR_THICKNESS, monSides.w);
-      ctx.fillRect(monX, monSY, MONITOR_THICKNESS, monSides.h);
+      // top view center monitor
+      ctx.lineWidth = MONITOR_THICKNESS;
+      ctx.moveTo(monX, monTY);
+      ctx.lineTo(monX, monTY + monSides.w);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+
+      // side view center monitor
+      ctx.lineWidth = MONITOR_THICKNESS;
+      ctx.moveTo(monX, monSY);
+      ctx.lineTo(monX, monSY + monSides.h);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+
+      if (diagram.monitor.count === 3) {
+        // top view left monitor
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.translate(monX, monLeftY);
+        ctx.rotate((-tripleAngle * Math.PI) / 180);
+        ctx.translate(-monX, -monLeftY);
+        ctx.lineWidth = MONITOR_THICKNESS;
+        ctx.moveTo(monX, monLeftY);
+        ctx.lineTo(monX, monLeftY + monSides.w);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        // top view right monitor
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.translate(monX, monRightY);
+        ctx.rotate(((tripleAngle + 180) * Math.PI) / 180);
+        ctx.translate(-monX, -monRightY);
+        ctx.lineWidth = MONITOR_THICKNESS;
+        ctx.moveTo(monX, monRightY);
+        ctx.lineTo(monX, monRightY + monSides.w);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
     },
 
     drawViewLines: function () {
@@ -307,15 +361,29 @@
       var headTY = this.headPositions.ty;
       var headSY = this.headPositions.sy;
 
+      var fovAngle = this.getFieldsOfView();
+      var fovTripleTH = fovW * Math.tan(fovAngle.th / 2);
+      var fovTripleW = fovW;
+      if (fovAngle.th > Math.PI) {
+        fovTripleW = -fovTripleW;
+      }
+
       // Top view
       ctx.beginPath();
       ctx.moveTo(headX, headTY);
       ctx.lineTo(headX - fovW, headTY - fovTH);
       ctx.moveTo(headX, headTY);
       ctx.lineTo(headX - fovW, headTY + fovTH);
+
+      if (diagram.monitor.count === 3) {
+        ctx.moveTo(headX, headTY);
+        ctx.lineTo(headX - fovTripleW, headTY + fovTripleTH);
+        ctx.moveTo(headX, headTY);
+        ctx.lineTo(headX - fovTripleW, headTY - fovTripleTH);
+      }
       ctx.stroke();
 
-      // Top view
+      // Side view
       ctx.beginPath();
       ctx.moveTo(headX, headSY);
       ctx.lineTo(headX - fovW, headSY - fovSH);
@@ -327,7 +395,7 @@
     drawAngleText: function () {
       var ctx = this.context;
       var fovs = this.getFieldsOfView();
-      var hFov, vFov;
+      var hFov, vFov, thFov;
       var yOffset = this.textHeight / 3;
       var fovX = this.headPositions.x + HEAD_SIZE * 2 + 5;
       var headTY = this.headPositions.ty;
@@ -347,6 +415,7 @@
 
       fovs.h = this.degreesFromRadians(fovs.h);
       fovs.v = this.degreesFromRadians(fovs.v);
+      fovs.th = this.degreesFromRadians(fovs.th);
 
       games.r3e = this.gameSpecific.r3e(fovs.v);
       games.dr = this.gameSpecific.dr(fovs.v);
@@ -361,6 +430,11 @@
 
       ctx.fillText(hFov + '\u00b0', fovX, headTY + yOffset);
       ctx.fillText(vFov + '\u00b0', fovX, headSY + yOffset);
+
+      if (diagram.monitor.count === 3) {
+        thFov = fovs.th.toPrecision(precision).replace('.', '\u200a.\u200a');
+        ctx.fillText(thFov + '\u00b0', fovX, headTY + yOffset + 20);
+      }
 
       // Other games
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY);
@@ -574,8 +648,11 @@
       'distance-s': 'distance-n',
       'size-n': 'size',
       'size-s': 'size-n',
+      'triple-angle-n': 'triple-angle',
+      'triple-angle-s': 'triple-angle-n',
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
+    var monitorCount = Number($form.elements['monitor-count'].value);
     var label;
 
     if (el.name && el.name !== 'aspect-ratio') {
@@ -598,6 +675,12 @@
       label.classList.toggle('inches', input.checked);
     });
 
+    ['triple-angle'].forEach(function (key) {
+      diagram.measurements[key] = {
+        value: parseInt($form.elements[key + '-n'].value, 10),
+      };
+    });
+
     diagram.monitor.distance = diagram.pixelsFromUnits(
       diagram.measurements.distance.value,
       diagram.measurements.distance.isInches,
@@ -609,6 +692,9 @@
     );
 
     diagram.monitor.ratio = ratio;
+
+    diagram.monitor.count = monitorCount;
+    diagram.monitor.tripleAngle = diagram.measurements['triple-angle'].value;
 
     diagram.render(carImages);
     diagram.alreadyUpdated = true;
@@ -639,6 +725,14 @@
       el: document.querySelector('#slider-size'),
     });
 
+    sliders.tripleAngle = new Slider({
+      min: 0,
+      max: 90,
+      step: 1,
+      value: 65,
+      el: document.querySelector('#slider-triple-angle'),
+    });
+
     sliders.distance.on('change', function () {
       formChange({
         target: {
@@ -651,6 +745,14 @@
       formChange({
         target: {
           name: 'size-s',
+          value: this.getValue(),
+        },
+      });
+    });
+    sliders.tripleAngle.on('change', function () {
+      formChange({
+        target: {
+          name: 'triple-angle-s',
           value: this.getValue(),
         },
       });
