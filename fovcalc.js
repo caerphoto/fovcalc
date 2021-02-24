@@ -34,7 +34,7 @@
     buttons: {
       open: $('#leave-feedback'),
       cancel: $('#feedback-cancel'),
-      send: $('#feedback-send')
+      send: $('#feedback-send'),
     },
     init: function () {
       this.form = this.el.querySelector('form');
@@ -103,7 +103,7 @@
       });
       xhr.open('POST', this.form.action.replace('.404', ''));
       xhr.send(formData);
-    }
+    },
   };
 
   var carImages = {
@@ -128,7 +128,7 @@
       if (this.numLoaded === 2) {
         this.onReady.call(this);
       }
-    }
+    },
   };
 
   var diagram = {
@@ -142,14 +142,14 @@
       normSY: 0.17,
       x: 0,
       ty: 0,
-      sy: 0
+      sy: 0,
     },
     xOffset: 0,
     textHeight: 1,
 
     measurements: {
       distance: { value: 0, isInches: false },
-      size: { value: 0, isInches: false }
+      size: { value: 0, isInches: false },
     },
 
     monitor: {
@@ -161,7 +161,7 @@
         var rh = this.ratio[1];
         var d = this.diagonalSize;
 
-        var h = (d * rh) / Math.sqrt(rw* rw + rh * rh);
+        var h = (d * rh) / Math.sqrt(rw * rw + rh * rh);
         var w = (rw / rh) * h;
 
         return { w: w, h: h };
@@ -180,7 +180,10 @@
       this.context.font = '1em ' + window.getComputedStyle(D.body).fontFamily;
 
       // fontSize will be in pixels
-      this.textHeight = parseFloat(window.getComputedStyle(D.body).fontSize, 10);
+      this.textHeight = parseFloat(
+        window.getComputedStyle(D.body).fontSize,
+        10,
+      );
     },
     pixelsFromUnits: function (u, useInches) {
       var pixels = u * carImages.scale;
@@ -196,14 +199,14 @@
     },
 
     degreesFromRadians: function (radians) {
-      return ((radians * 180) / Math.PI);
+      return (radians * 180) / Math.PI;
     },
 
     getFieldsOfView: function () {
       var monSides = this.monitor.getSides();
       return {
-        h: Math.atan((monSides.w / 2) / this.monitor.distance) * 2,
-        v: Math.atan((monSides.h / 2) / this.monitor.distance) * 2,
+        h: Math.atan(monSides.w / 2 / this.monitor.distance) * 2,
+        v: Math.atan(monSides.h / 2 / this.monitor.distance) * 2,
       };
     },
 
@@ -228,26 +231,25 @@
 
         // Updated scaling formula by Reddit user GalaxyMaster_P:
         // https://www.reddit.com/r/dirtgame/comments/bgg61d/i_created_an_fov_editing_tool_for_dirt_rally_20/
-        normalizedPos = -Math.sqrt((degrees-75) / -20) + 1.5;
+        normalizedPos = -Math.sqrt((degrees - 75) / -20) + 1.5;
         scaledPos = Math.round(normalizedPos * 10) - 5;
 
         // Currently don't do anything with normalizedOutput, as it's not a
         // super useful value outside of some dubiously legal Cheat Engine use.
         // normalizedOutput = ' (' + normalizedPos.toFixed(3) + ')';
 
-
         if (scaledPos === 0) return ' 0';
-        if (scaledPos < 0) return '\u2212' + (-scaledPos);
+        if (scaledPos < 0) return '\u2212' + -scaledPos;
         return '+' + scaledPos;
       },
       f1: function (degrees) {
         function format(num) {
           return num.toString().replace('-', '\u2212');
         }
-        var scale = Math.round(((degrees - 77) / 2)) / 20;
+        var scale = Math.round((degrees - 77) / 2) / 20;
         return {
           old: format(scale),
-          new: format(scale * 2)
+          new: format(scale * 2),
         };
       },
     },
@@ -255,8 +257,10 @@
     setHeadPositions: function (carImages) {
       this.headPositions.x = carImages.top.width * this.headPositions.normX;
       this.headPositions.ty = carImages.top.height * this.headPositions.normTY;
-      this.headPositions.sy = carImages.side.height * this.headPositions.normSY +
-        carImages.top.height + 10;
+      this.headPositions.sy =
+        carImages.side.height * this.headPositions.normSY +
+        carImages.top.height +
+        10;
     },
 
     drawCarImages: function (images) {
@@ -288,7 +292,6 @@
       ctx.beginPath();
       ctx.arc(headX, headSY, HEAD_SIZE, 0, pi2);
       ctx.fill();
-
 
       ctx.fillRect(monX, monTY, MONITOR_THICKNESS, monSides.w);
       ctx.fillRect(monX, monSY, MONITOR_THICKNESS, monSides.h);
@@ -336,7 +339,7 @@
         rbr: 0,
         dr: 0,
         dr2: 0,
-        f1: 0
+        f1: 0,
       };
 
       // RBR FoV is measured in radians, so just use existing value
@@ -359,7 +362,6 @@
       ctx.fillText(hFov + '\u00b0', fovX, headTY + yOffset);
       ctx.fillText(vFov + '\u00b0', fovX, headSY + yOffset);
 
-
       // Other games
       ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY);
       ctx.fillText('RBR: ' + games.rbr, 150, otherTextY);
@@ -372,9 +374,12 @@
       ctx.globalAlpha = 1;
 
       if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally 2: ' + games.dr2 + ' (from centre of slider)', 150, otherTextY + 25);
+      ctx.fillText(
+        'DiRT Rally 2: ' + games.dr2 + ' (from centre of slider)',
+        150,
+        otherTextY + 25,
+      );
       ctx.globalAlpha = 1;
-
     },
 
     render: function (images) {
@@ -384,7 +389,7 @@
       this.drawViewLines();
       this.drawHeadsAndMonitors();
       this.drawAngleText();
-    }
+    },
   };
 
   function has(obj, prop) {
@@ -398,14 +403,18 @@
     });
 
     if (!hasAllProperties) {
-      throw new Error('Missing required options. Supplied: ' +
-        Object.keys(options).join(', '));
+      throw new Error(
+        'Missing required options. Supplied: ' +
+          Object.keys(options).join(', '),
+      );
     }
 
     this.properties = {};
-    requiredProperties.forEach(function (prop) {
-      this.properties[prop] = options[prop];
-    }.bind(this));
+    requiredProperties.forEach(
+      function (prop) {
+        this.properties[prop] = options[prop];
+      }.bind(this),
+    );
 
     if (has(options, 'value')) {
       this.properties.value = options.value;
@@ -438,9 +447,12 @@
 
     this.eventHandlers = {};
 
-    setTimeout(function () {
-      this.updateSliderPosition();
-    }.bind(this), 0);
+    setTimeout(
+      function () {
+        this.updateSliderPosition();
+      }.bind(this),
+      0,
+    );
   };
 
   Slider.prototype = {
@@ -459,9 +471,11 @@
     },
 
     onMouseDown: function (event) {
-      var isOnSlider = Object.keys(this.els).some(function (key) {
-        return event.target === this.els[key];
-      }.bind(this));
+      var isOnSlider = Object.keys(this.els).some(
+        function (key) {
+          return event.target === this.els[key];
+        }.bind(this),
+      );
 
       if (!isOnSlider) return this;
 
@@ -475,12 +489,13 @@
       event.preventDefault();
 
       var rect = this.els.thumbContainer.getBoundingClientRect();
-      var x = (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
+      var x =
+        (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
       if (x < 0) x = 0;
       if (x >= rect.width) x = rect.width;
 
       var step = this.properties.step;
-      var normalizedValue = (x / rect.width);
+      var normalizedValue = x / rect.width;
       var min = this.properties.min;
       var max = this.properties.max;
 
@@ -522,9 +537,11 @@
         return;
       }
 
-      this.eventHandlers[eventName].forEach(function (handler) {
-        handler.call(this, newValue);
-      }.bind(this));
+      this.eventHandlers[eventName].forEach(
+        function (handler) {
+          handler.call(this, newValue);
+        }.bind(this),
+      );
 
       return this;
     },
@@ -538,7 +555,7 @@
 
     getValue: function () {
       return this.properties.value;
-    }
+    },
   };
 
   function getAncestorLabelOf(input) {
@@ -556,7 +573,7 @@
       'distance-n': 'distance',
       'distance-s': 'distance-n',
       'size-n': 'size',
-      'size-s': 'size-n'
+      'size-s': 'size-n',
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
     var label;
@@ -575,7 +592,7 @@
 
       diagram.measurements[key] = {
         value: parseInt($form.elements[key + '-n'].value, 10),
-        isInches: input.checked
+        isInches: input.checked,
       };
 
       label.classList.toggle('inches', input.checked);
@@ -583,11 +600,13 @@
 
     diagram.monitor.distance = diagram.pixelsFromUnits(
       diagram.measurements.distance.value,
-      diagram.measurements.distance.isInches);
+      diagram.measurements.distance.isInches,
+    );
 
     diagram.monitor.diagonalSize = diagram.pixelsFromUnits(
       diagram.measurements.size.value,
-      diagram.measurements.size.isInches);
+      diagram.measurements.size.isInches,
+    );
 
     diagram.monitor.ratio = ratio;
 
@@ -609,7 +628,7 @@
       max: 120,
       step: 1,
       value: 40,
-      el: document.querySelector('#slider-distance')
+      el: document.querySelector('#slider-distance'),
     });
 
     sliders.size = new Slider({
@@ -617,27 +636,27 @@
       max: 100,
       step: 0.5,
       value: 24,
-      el: document.querySelector('#slider-size')
+      el: document.querySelector('#slider-size'),
     });
 
     sliders.distance.on('change', function () {
       formChange({
         target: {
           name: 'distance-s',
-          value: this.getValue()
-        }
+          value: this.getValue(),
+        },
       });
     });
     sliders.size.on('change', function () {
       formChange({
         target: {
           name: 'size-s',
-          value: this.getValue()
-        }
+          value: this.getValue(),
+        },
       });
     });
 
     // Feedback stuff
     feedback.init();
   });
-}(window.document));
+})(window.document);
