@@ -164,6 +164,12 @@ input[type="number"] + label {
   border-style: solid;
   border-color: #444 #777 #777 #444;
   box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  cursor: ns-resize;
+}
+
+.unit-switch_slider:hover {
+  background-color: #a1cef7;
+  border-color: #555 #888 #888 #555;
 }
 
 .unit-switch_slider--thumb {
@@ -182,6 +188,12 @@ input[type="number"] + label {
           0 1px 3px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(0, 0, 0, 0.4);
 }
+
+.unit-switch_slider:hover .unit-switch_slider--thumb {
+  background-color: #ff588d;
+  border-color: rgba(160, 0, 0, 0.5);
+}
+
 
 .unit-switch.inches .unit-switch_slider--thumb {
   top: 1px;
