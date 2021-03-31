@@ -350,6 +350,23 @@ button:disabled {
   width: 6em;
 }
 
+.number-hint {
+  display: none;
+  float: right;
+  clear: both;
+  width: 21em;
+  margin: 0 2em 0 0;
+  padding: 0.5em 1em;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+  background-color: #eed;
+  font-size: 0.8em;
+}
+
+.number-hint.visible {
+  display: block;
+}
+
 @media (max-width: 56em) {
   body {
     margin: 0.5em;

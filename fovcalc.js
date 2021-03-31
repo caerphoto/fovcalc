@@ -20,6 +20,7 @@
 
   var $form = $('#controls');
   var sliders = {};
+  var $numberHint = $('#number-hint');
 
   var feedback = {
     el: $('#feedback'),
@@ -530,9 +531,10 @@
     },
 
     setValue: function (value) {
-      this.properties.value = value;
+      var intValue = parseInt(value, 10);
+      this.properties.value = intValue;
       this.updateSliderPosition();
-      this.emit('change', value);
+      this.emit('change', intValue);
       return this;
     },
 
@@ -559,7 +561,6 @@
       'size-s': 'size-n'
     };
     var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
-    var label;
 
     if (el.name && el.name !== 'aspect-ratio') {
       if (/-s$/.test(el.name)) {
@@ -580,6 +581,11 @@
 
       label.classList.toggle('inches', input.checked);
     });
+
+    $numberHint.classList.toggle('visible',
+      sliders.size.properties.value >= sliders.size.properties.max ||
+      sliders.distance.properties.value >= sliders.distance.properties.max
+    );
 
     diagram.monitor.distance = diagram.pixelsFromUnits(
       diagram.measurements.distance.value,
