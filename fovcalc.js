@@ -262,7 +262,7 @@
       },
       rbr: function (radians) {
         // RBR FoV is measured in radians 
-        return radians.toFixed(2);
+        return radians.toFixed(3);
       }
     },
 
