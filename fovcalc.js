@@ -165,7 +165,14 @@
         var h = (d * rh) / Math.sqrt(rw* rw + rh * rh);
         var w = (rw / rh) * h;
 
-        return { w: w, h: h };
+        // This value is what the width would be if the monitor was actually in
+        // a 4:3 ratio; we need this for calculating the FOV value for Richard
+        // Burns Rally.
+        // Thanks to Vileska for the information:
+        // https://vileska.blogspot.com/p/blog-page_12.html
+        var w43 = h * (4/3);
+
+        return { w: w, w43: w43, h: h };
       },
       distance: 95,
     },
@@ -205,6 +212,8 @@
       return {
         h: Math.atan((monSides.w / 2) / this.monitor.distance) * 2,
         v: Math.atan((monSides.h / 2) / this.monitor.distance) * 2,
+        // Imaginary 4:3 FOV used by Richard Burns Rally.
+        h43: Math.atan((monSides.w43 / 2) / this.monitor.distance) * 2,
       };
     },
 
@@ -251,6 +260,10 @@
           new: format(scale * 2)
         };
       },
+      rbr: function (radians) {
+        // RBR FoV is measured in radians 
+        return radians.toFixed(2);
+      }
     },
 
     setHeadPositions: function (carImages) {
@@ -340,9 +353,6 @@
         f1: 0
       };
 
-      // RBR FoV is measured in radians, so just use existing value
-      games.rbr = fovs.h.toFixed(2);
-
       fovs.h = this.degreesFromRadians(fovs.h);
       fovs.v = this.degreesFromRadians(fovs.v);
 
@@ -350,6 +360,7 @@
       games.dr = this.gameSpecific.dr(fovs.v);
       games.dr2 = this.gameSpecific.dr2(fovs.v);
       games.f1 = this.gameSpecific.f1(fovs.h);
+      games.rbr = this.gameSpecific.rbr(fovs.h43);
 
       precision = fovs.h > 100 ? 4 : 3;
       // u200a is a 'hair space'
