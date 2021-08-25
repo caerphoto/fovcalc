@@ -261,7 +261,8 @@
         };
       },
       rbr: function (radians) {
-        // RBR FoV is measured in radians 
+        // RBR value is already in radians, so we just need to make it
+        // presentable.
         return radians.toFixed(3);
       }
     },
