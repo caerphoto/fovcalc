@@ -27,7 +27,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
   feedback := extractFormData(r)
 
   if isValidMd5(feedback) {
-    log.Printf("Received feedback from \033[0;33m%s\033[0m:\n<\033[0;36m%s\033[0m>\n", feedback.Name, feedback.Text)
+    log.Printf("Received feedback from \033[0;33m%s\033[0m:\n>\033[0;36m%s\033[0m<\n", feedback.Name, feedback.Text)
     fmt.Fprintf(w, "OK")
     return
   } else {
