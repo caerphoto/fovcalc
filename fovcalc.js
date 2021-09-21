@@ -395,8 +395,8 @@
       this.renderTextWithClear(vFov + '\u00b0' + ' vertical', fovX, headSY);
 
       // Other games
-      this.renderTitleWithValue('R3E', games.r3e, 5, otherTextY);
-      this.renderTitleWithValue('RBR', games.rbr, 150, otherTextY);
+      this.renderTitleWithValue('RaceRoom', games.r3e, 5, otherTextY);
+      this.renderTitleWithValue('Richard Burns Rally', games.rbr, 240, otherTextY);
 
       if (/^\(too/.test(games.dr)) ctx.globalAlpha = 0.3;
       this.renderTitleWithValue('DiRT Rally', games.dr, 5, otherTextY + 25);
@@ -407,8 +407,8 @@
       ctx.globalAlpha = 1;
 
       this.renderTitleWithValue('F1 ’18', games.f1['18'], 5, otherTextY + 50);
-      this.renderTitleWithValue('F1 ’19/’20', games.f1['19'], 150, otherTextY + 50);
-      this.renderTitleWithValue('F1 ’21', games.f1['21'], 300, otherTextY + 50);
+      this.renderTitleWithValue('F1 ’19/’20', games.f1['19'], 200, otherTextY + 50);
+      this.renderTitleWithValue('F1 ’21', games.f1['21'], 400, otherTextY + 50);
 
 
     },
