@@ -16,7 +16,7 @@
   // These two should match the canvas element's size (as specified in
   // fovcalc.css) at normal screen size
   var CANVAS_WIDTH = 600;
-  var CANVAS_HEIGHT = 490;
+  var CANVAS_HEIGHT = 520;
 
   var $form = $('#controls');
   var sliders = {};
@@ -224,8 +224,8 @@
         return Math.round((degrees * 10) / 58) / 10;
       },
       dr: function (degrees) {
-        if (degrees < 29.5) return '0.0!';
-        if (degrees >= 70.5) return '1.0!';
+        if (degrees < 29.5) return '(too narrow)';
+        if (degrees >= 70.5) return '(too wide)';
         return ((degrees - 30) / 40).toFixed(1);
       },
       dr2: function (degrees) {
@@ -233,8 +233,8 @@
         var scaledPos;
         // var normalizedOutput;
         // u2212 is a full-width minus sign (i.e. same width as + sign)
-        if (Math.round(degrees) < 30) return '\u22125!';
-        if (Math.round(degrees) > 70) return '+5!';
+        if (Math.round(degrees) < 30) return '(too narrow)';
+        if (Math.round(degrees) > 70) return '(too wide)';
 
         // Updated scaling formula by Reddit user GalaxyMaster_P:
         // https://www.reddit.com/r/dirtgame/comments/bgg61d/i_created_an_fov_editing_tool_for_dirt_rally_20/
@@ -247,8 +247,9 @@
 
 
         if (scaledPos === 0) return ' 0';
-        if (scaledPos < 0) return '\u2212' + (-scaledPos);
-        return '+' + scaledPos;
+        if (scaledPos < 0) return '\u2212' + (-scaledPos) + ' from centre';
+
+        return '+' + scaledPos + ' from centre';
       },
       f1: function (degrees) {
         function format(num) {
@@ -256,8 +257,9 @@
         }
         var scale = Math.round(((degrees - 77) / 2)) / 20;
         return {
-          old: format(scale),
-          new: format(scale * 2)
+          '18': format(scale),
+          '19': format(scale * 2),
+          '21': format(scale * 40)
         };
       },
       rbr: function (radians) {
@@ -336,15 +338,35 @@
       ctx.stroke();
     },
 
-    drawAngleText: function () {
+    renderTitleWithValue: function (title, value, x, y) {
+      var ctx = this.context;
+      var titleColon = (title || '') + ': ';
+      var titleWidth = ctx.measureText(titleColon).width;
+      var normalFill = ctx.fillStyle;
+
+      ctx.fillStyle = '#844';
+      ctx.fillText(titleColon, x, y);
+      ctx.fillStyle = normalFill;
+      ctx.fillText(value, x + titleWidth, y);
+    },
+
+    renderTextWithClear: function (text, x, y) {
+      var ctx = this.context;
+      var metrics = ctx.measureText(text);
+      console.log(metrics);
+      ctx.clearRect(x, y - 16, metrics.width, 20);
+      ctx.fillText(text, x, y);
+    },
+
+    drawAngleValues: function () {
       var ctx = this.context;
       var fovs = this.getFieldsOfView();
       var hFov, vFov;
       var yOffset = this.textHeight / 3;
       var fovX = this.headPositions.x + HEAD_SIZE * 2 + 5;
-      var headTY = this.headPositions.ty;
-      var headSY = this.headPositions.sy;
-      var otherTextY = this.h - 35 + yOffset;
+      var headTY = this.headPositions.ty + yOffset;
+      var headSY = this.headPositions.sy + yOffset;
+      var otherTextY = this.h - 65 + yOffset;
       var precision;
       var games = {
         r3e: 0,
@@ -369,24 +391,25 @@
       precision = fovs.v > 100 ? 4 : 3;
       vFov = fovs.v.toPrecision(precision).replace('.', '\u200a.\u200a');
 
-      ctx.fillText(hFov + '\u00b0', fovX, headTY + yOffset);
-      ctx.fillText(vFov + '\u00b0', fovX, headSY + yOffset);
-
+      this.renderTextWithClear(hFov + '\u00b0' + ' horizontal', fovX, headTY);
+      this.renderTextWithClear(vFov + '\u00b0' + ' vertical', fovX, headSY);
 
       // Other games
-      ctx.fillText('R3E: ' + games.r3e + '\u00d7', 5, otherTextY);
-      ctx.fillText('RBR: ' + games.rbr, 150, otherTextY);
+      this.renderTitleWithValue('R3E', games.r3e, 5, otherTextY);
+      this.renderTitleWithValue('RBR', games.rbr, 150, otherTextY);
 
-      ctx.fillText('F1: ' + games.f1.old, 300, otherTextY);
-      ctx.fillText('F1 (2019+): ' + games.f1.new, 400, otherTextY);
-
-      if (/!/.test(games.dr)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally: ' + games.dr, 5, otherTextY + 25);
+      if (/^\(too/.test(games.dr)) ctx.globalAlpha = 0.3;
+      this.renderTitleWithValue('DiRT Rally', games.dr, 5, otherTextY + 25);
       ctx.globalAlpha = 1;
 
-      if (/!/.test(games.dr2)) ctx.globalAlpha = 0.3;
-      ctx.fillText('DiRT Rally 2: ' + games.dr2 + ' (from centre of slider)', 150, otherTextY + 25);
+      if (/^\(too/.test(games.dr2)) ctx.globalAlpha = 0.3;
+      this.renderTitleWithValue('DiRT Rally 2', games.dr2, 240, otherTextY + 25);
       ctx.globalAlpha = 1;
+
+      this.renderTitleWithValue('F1 ’18', games.f1['18'], 5, otherTextY + 50);
+      this.renderTitleWithValue('F1 ’19/’20', games.f1['19'], 150, otherTextY + 50);
+      this.renderTitleWithValue('F1 ’21', games.f1['21'], 300, otherTextY + 50);
+
 
     },
 
@@ -396,7 +419,7 @@
       this.drawCarImages(images);
       this.drawViewLines();
       this.drawHeadsAndMonitors();
-      this.drawAngleText();
+      this.drawAngleValues();
     }
   };
 

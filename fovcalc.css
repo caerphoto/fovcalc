@@ -34,8 +34,16 @@ a:visited {
   color: #980128;
 }
 
+#fov-extra-info {
+  color: #f00;
+  text-align: center;
+}
+
 .caption {
   text-align: center;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.5em;
 }
 
 h1, h2 {
@@ -72,7 +80,7 @@ p {
 
 form {
   max-width: 35em;
-  margin: 0 auto;
+  margin: 0 auto 0.5em;
   border-bottom: 2px solid #78a3ca;
 }
 
@@ -218,7 +226,7 @@ input[type="number"] + label {
 #fov-preview {
   display: block;
   max-width: 600px;
-  max-height: 490px;
+  max-height: 520px;
   border: none;
   margin: 0.5em auto;
   cursor: crosshair;
