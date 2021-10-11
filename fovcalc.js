@@ -259,7 +259,7 @@
         return {
           '18': format(scale),
           '19': format(scale * 2),
-          '21': format(scale * 40)
+          '21': format(scale * 20)
         };
       },
       rbr: function (radians) {
@@ -409,8 +409,6 @@
       this.renderTitleWithValue('F1 ’18', games.f1['18'], 5, otherTextY + 50);
       this.renderTitleWithValue('F1 ’19/’20', games.f1['19'], 200, otherTextY + 50);
       this.renderTitleWithValue('F1 ’21', games.f1['21'], 400, otherTextY + 50);
-
-
     },
 
     render: function (images) {
