@@ -19,6 +19,7 @@
   var CANVAS_HEIGHT = 520;
 
   var $form = $('#controls');
+  var $aspectRatioCustom = $('#aspect-ratio-custom');
   var sliders = {};
   var $numberHint = $('#number-hint');
 
@@ -353,7 +354,6 @@
     renderTextWithClear: function (text, x, y) {
       var ctx = this.context;
       var metrics = ctx.measureText(text);
-      console.log(metrics);
       ctx.clearRect(x, y - 16, metrics.width, 20);
       ctx.fillText(text, x, y);
     },
@@ -585,6 +585,23 @@
     return label;
   }
 
+  function getAspectRatio() {
+    var ratioSelected = $form.elements['aspect-ratio'].value;
+    var ratio;
+
+    if (ratioSelected === 'custom') {
+      ratio = [
+        $form.elements['aspect-ratio-h'].value || 1,
+        $form.elements['aspect-ratio-v'].value || 1,
+        1 // signal value to indicate use of custom ratio
+      ];
+    } else {
+      ratio = ratioSelected.split(':');
+    }
+
+    return ratio.map(Number);
+  }
+
   function formChange(event) {
     var el = (event && event.target) || { name: null };
     var relatedInputs = {
@@ -593,7 +610,13 @@
       'size-n': 'size',
       'size-s': 'size-n'
     };
-    var ratio = $form.elements['aspect-ratio'].value.split(':').map(Number);
+    var ratio = getAspectRatio();
+    var customRatio = !!ratio[2];
+
+    if (el.name === 'aspect-ratio') {
+      $aspectRatioCustom.classList.toggle('visible', customRatio);
+      if (customRatio) $form.elements['aspect-ratio-h'].focus();
+    }
 
     if (el.name && el.name !== 'aspect-ratio') {
       if (/-s$/.test(el.name)) {
